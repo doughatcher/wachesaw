@@ -1,0 +1,12 @@
+# Godot
+.godot/
+*.import
+
+# Builds
+builds/
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*~

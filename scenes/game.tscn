@@ -1,0 +1,155 @@
+[gd_scene load_steps=3 format=3 uid="uid://game_scene"]
+
+[ext_resource type="Script" path="res://presentation/game_controller.gd" id="1"]
+[ext_resource type="Script" path="res://presentation/board_view.gd" id="2"]
+
+[node name="GameScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.192, 0.18, 0.168, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="TopBar" type="HBoxContainer" parent="MarginContainer/VBox"]
+layout_mode = 2
+
+[node name="MenuButton" type="Button" parent="MarginContainer/VBox/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Menu"
+flat = true
+
+[node name="Spacer1" type="Control" parent="MarginContainer/VBox/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="MarginContainer/VBox/TopBar"]
+layout_mode = 2
+text = "WACHESAW"
+horizontal_alignment = 1
+
+[node name="Spacer2" type="Control" parent="MarginContainer/VBox/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DifficultySelector" type="OptionButton" parent="MarginContainer/VBox/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="StatusPanel" type="PanelContainer" parent="MarginContainer/VBox"]
+layout_mode = 2
+
+[node name="StatusLabel" type="Label" parent="MarginContainer/VBox/StatusPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "White to move"
+horizontal_alignment = 1
+
+[node name="ContentHBox" type="HBoxContainer" parent="MarginContainer/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="BoardColumn" type="VBoxContainer" parent="MarginContainer/VBox/ContentHBox"]
+layout_mode = 2
+
+[node name="CapturedTop" type="Label" parent="MarginContainer/VBox/ContentHBox/BoardColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0, 24)
+
+[node name="BoardView" type="Control" parent="MarginContainer/VBox/ContentHBox/BoardColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(424, 448)
+script = ExtResource("2")
+
+[node name="CapturedBottom" type="Label" parent="MarginContainer/VBox/ContentHBox/BoardColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0, 24)
+
+[node name="ButtonRow" type="HBoxContainer" parent="MarginContainer/VBox/ContentHBox/BoardColumn"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="NewGameButton" type="Button" parent="MarginContainer/VBox/ContentHBox/BoardColumn/ButtonRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "New Game"
+
+[node name="UndoButton" type="Button" parent="MarginContainer/VBox/ContentHBox/BoardColumn/ButtonRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Undo"
+
+[node name="SidePanel" type="VBoxContainer" parent="MarginContainer/VBox/ContentHBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(200, 0)
+
+[node name="PiecesHeader" type="Label" parent="MarginContainer/VBox/ContentHBox/SidePanel"]
+layout_mode = 2
+text = "PIECES"
+
+[node name="PieceList" type="RichTextLabel" parent="MarginContainer/VBox/ContentHBox/SidePanel"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 180)
+bbcode_enabled = true
+text = "K  Chief  — 1 sq any. Lose = lose.
+Q  Keeper  — 1 sq any. Bodyguard.
+R  Hunter  — 1 sq orthogonal.
+B  River Runner — 1 sq diagonal.
+N  Trader  — L-jump. No cross-win."
+
+[node name="WinHeader" type="Label" parent="MarginContainer/VBox/ContentHBox/SidePanel"]
+layout_mode = 2
+text = "WIN CONDITIONS"
+
+[node name="WinInfo" type="RichTextLabel" parent="MarginContainer/VBox/ContentHBox/SidePanel"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 80)
+bbcode_enabled = true
+text = "Capture opponent's Chief
+Reach their back row
+Swap adjacent = valid move
+Trader/Chief can't cross"
+
+[node name="MovesHeader" type="Label" parent="MarginContainer/VBox/ContentHBox/SidePanel"]
+layout_mode = 2
+text = "MOVES"
+
+[node name="MoveLogScroll" type="ScrollContainer" parent="MarginContainer/VBox/ContentHBox/SidePanel"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="MoveLogContainer" type="VBoxContainer" parent="MarginContainer/VBox/ContentHBox/SidePanel/MoveLogScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3

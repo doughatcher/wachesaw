@@ -1,0 +1,39 @@
+{
+  "name": "Wachesaw (Godot 4.4)",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "GODOT_VERSION": "4.4"
+    }
+  },
+  "features": {
+    "ghcr.io/jsburckhardt/devcontainer-features/just:1": {},
+    "ghcr.io/devcontainers/features/python:1": {
+      "installTools": true,
+      "version": "3.12"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "geequlim.godot-tools",
+        "alfish.godot-files",
+        "skeletal-waring.just"
+      ],
+      "settings": {
+        "editor.tabSize": 4,
+        "editor.insertSpaces": false,
+        "files.associations": {
+          "*.gd": "gdscript",
+          "*.tscn": "ini",
+          "*.tres": "ini",
+          "*.godot": "ini"
+        }
+      }
+    }
+  },
+  "forwardPorts": [8000, 6007],
+  "postCreateCommand": "godot --headless --import 2>/dev/null || true",
+  "postAttachCommand": "just serve",
+  "remoteUser": "root"
+}

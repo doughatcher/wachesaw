@@ -1,0 +1,77 @@
+{
+  "board": {
+    "width": 5,
+    "height": 5,
+    "terrain": [
+      [0, 0, 1, 0, 0],
+      [0, 0, 1, 0, 0],
+      [0, 0, 1, 0, 0],
+      [0, 0, 1, 0, 0],
+      [0, 0, 1, 0, 0]
+    ]
+  },
+  "terrain_types": {
+    "0": { "name": "normal", "effect": "none" },
+    "1": { "name": "river", "effect": "none", "visual": "water" }
+  },
+  "pieces": {
+    "CHIEF": {
+      "name": "Chief",
+      "moves": [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]],
+      "can_jump": false,
+      "can_cross_win": false,
+      "material_value": 0,
+      "is_leader": true
+    },
+    "KEEPER": {
+      "name": "Keeper",
+      "moves": [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]],
+      "can_jump": false,
+      "can_cross_win": true,
+      "material_value": 900,
+      "is_leader": false
+    },
+    "HUNTER": {
+      "name": "Hunter",
+      "moves": [[1,0],[-1,0],[0,1],[0,-1]],
+      "can_jump": false,
+      "can_cross_win": true,
+      "material_value": 500,
+      "is_leader": false
+    },
+    "RIVER_RUNNER": {
+      "name": "River Runner",
+      "moves": [[1,1],[1,-1],[-1,1],[-1,-1]],
+      "can_jump": false,
+      "can_cross_win": true,
+      "material_value": 400,
+      "is_leader": false
+    },
+    "TRADER": {
+      "name": "Trader",
+      "moves": [[2,1],[2,-1],[-2,1],[-2,-1],[1,2],[1,-2],[-1,2],[-1,-2]],
+      "can_jump": true,
+      "can_cross_win": false,
+      "material_value": 700,
+      "is_leader": false
+    }
+  },
+  "layout": {
+    "white": {
+      "row": 4,
+      "pieces": ["HUNTER", "RIVER_RUNNER", "CHIEF", "KEEPER", "TRADER"]
+    },
+    "black": {
+      "row": 0,
+      "pieces": ["TRADER", "KEEPER", "CHIEF", "RIVER_RUNNER", "HUNTER"]
+    }
+  },
+  "rules": {
+    "swap_enabled": true,
+    "swap_range": 1,
+    "swap_directions": "all_adjacent",
+    "win_conditions": ["capture_leader", "cross_back_row"],
+    "repetition_limit": 3,
+    "turn_timer_seconds": 0
+  }
+}

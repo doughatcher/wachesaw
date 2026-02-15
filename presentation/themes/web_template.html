@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="apple-mobile-web-app-title" content="Wachesaw">
+	<title>Wachesaw</title>
+	<style>
+		html, body {
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			background-color: #312e2b;
+			touch-action: none;
+		}
+		#canvas {
+			display: block;
+			width: 100%;
+			height: 100%;
+		}
+		#status {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			color: #f0d9b5;
+			font-family: 'Segoe UI', system-ui, sans-serif;
+			text-align: center;
+		}
+		#status-progress {
+			width: 260px;
+			height: 4px;
+			background: #3d3a37;
+			border-radius: 2px;
+			margin: 16px auto;
+		}
+		#status-progress-inner {
+			height: 100%;
+			background: #7fa650;
+			border-radius: 2px;
+			width: 0%;
+			transition: width 0.2s;
+		}
+		#status-notice {
+			font-size: 12px;
+			opacity: 0.5;
+			margin-top: 8px;
+		}
+	</style>
+	$GODOT_HEAD_INCLUDE
+</head>
+<body>
+	<canvas id="canvas"></canvas>
+	<div id="status">
+		<h1 style="font-weight: 200; letter-spacing: 8px; font-size: 36px;">WACHESAW</h1>
+		<div id="status-progress">
+			<div id="status-progress-inner"></div>
+		</div>
+		<div id="status-notice"></div>
+	</div>
+	<script src="$GODOT_URL"></script>
+	<script>
+		const GODOT_CONFIG = $GODOT_CONFIG;
+		const engine = new Engine(GODOT_CONFIG);
+		const statusNotice = document.getElementById('status-notice');
+		const statusProgress = document.getElementById('status-progress-inner');
+
+		engine.startGame({
+			canvas: document.getElementById('canvas'),
+			onProgress: function(current, total) {
+				if (total > 0) {
+					statusProgress.style.width = (current / total * 100) + '%';
+				}
+			},
+		}).then(() => {
+			document.getElementById('status').style.display = 'none';
+		}).catch((err) => {
+			statusNotice.textContent = 'Error: ' + err.message;
+		});
+	</script>
+</body>
+</html>

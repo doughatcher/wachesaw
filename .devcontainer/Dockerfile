@@ -1,0 +1,21 @@
+FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04
+
+ARG GODOT_VERSION=4.4
+
+# Install Godot headless binary
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends wget unzip ca-certificates \
+    && GODOT_FULL_VERSION="${GODOT_VERSION}-stable" \
+    && wget -q "https://github.com/godotengine/godot/releases/download/${GODOT_FULL_VERSION}/Godot_v${GODOT_FULL_VERSION}_linux.x86_64.zip" -O /tmp/godot.zip \
+    && unzip /tmp/godot.zip -d /tmp \
+    && mv "/tmp/Godot_v${GODOT_FULL_VERSION}_linux.x86_64" /usr/local/bin/godot \
+    && chmod +x /usr/local/bin/godot \
+    && rm /tmp/godot.zip \
+    && wget -q "https://github.com/godotengine/godot/releases/download/${GODOT_FULL_VERSION}/Godot_v${GODOT_FULL_VERSION}_export_templates.tpz" -O /tmp/templates.tpz \
+    && mkdir -p /root/.local/share/godot/export_templates/${GODOT_FULL_VERSION} \
+    && unzip /tmp/templates.tpz -d /tmp \
+    && mv /tmp/templates/* /root/.local/share/godot/export_templates/${GODOT_FULL_VERSION}/ \
+    && ln -sf /root/.local/share/godot/export_templates/${GODOT_FULL_VERSION} /root/.local/share/godot/export_templates/$(echo ${GODOT_FULL_VERSION} | sed 's/-/./') \
+    && rm -rf /tmp/templates /tmp/templates.tpz \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
