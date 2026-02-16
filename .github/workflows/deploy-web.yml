@@ -1,8 +1,8 @@
 name: Deploy Web Build to GitHub Pages
 
 on:
-  push:
-    branches: [main]
+  release:
+    types: [published]
   workflow_dispatch:
 
 permissions:
@@ -34,6 +34,11 @@ jobs:
           TEMPLATES_SRC=$(find /root/.local/share/godot/export_templates -maxdepth 1 -type d | tail -1)
           mkdir -p /github/home/.local/share/godot/export_templates
           ln -sf "$TEMPLATES_SRC" /github/home/.local/share/godot/export_templates/4.4.stable
+
+      - name: Generate build info
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git rev-parse --short HEAD > core/git_sha.txt
 
       - name: Build web export
         run: |
