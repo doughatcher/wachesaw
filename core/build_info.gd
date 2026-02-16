@@ -2,7 +2,7 @@
 ## SHA is read from res://core/git_sha.txt (generated at build time).
 extends Node
 
-const VERSION := "0.1.4"
+const VERSION := "0.1.5"
 const COPYRIGHT := "© 2026 Doug Hatcher"
 
 var git_sha: String = "dev"
