@@ -19,6 +19,7 @@ jobs:
       image: barichello/godot-ci:4.4
 
     strategy:
+      fail-fast: false
       matrix:
         include:
           - preset: "Linux/X11"
@@ -51,6 +52,7 @@ jobs:
 
       - name: Generate build info
         run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git rev-parse --short HEAD > core/git_sha.txt
           echo "SHA: $(cat core/git_sha.txt)"
 
