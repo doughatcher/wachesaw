@@ -146,17 +146,70 @@ clean-all: clean clean-cache
 
 # ─── Release ─────────────────────────────────────────────────────
 
-# Create a GitHub release with auto-generated notes. Usage: just release 0.2.0
-release version:
+# Create a GitHub release with auto-generated notes.
+# Usage: just release        (auto-bumps patch: 0.1.0 → 0.1.1)
+#        just release patch   (same as above)
+#        just release minor   (0.1.1 → 0.2.0)
+#        just release major   (0.2.0 → 1.0.0)
+release bump="patch":
     #!/usr/bin/env bash
     set -euo pipefail
-    TAG="v{{version}}"
 
     # Ensure working tree is clean
     if [[ -n "$(git status --porcelain)" ]]; then
         echo "✗ Working tree is dirty. Commit or stash changes first."
         exit 1
     fi
+
+    # Read current version from project.godot
+    CURRENT=$(grep 'config/version=' project.godot | sed 's/config\/version="//' | sed 's/"//')
+    if [[ -z "$CURRENT" ]]; then
+        echo "✗ Could not read version from project.godot"
+        exit 1
+    fi
+
+    IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
+    BUMP="{{bump}}"
+
+    case "$BUMP" in
+        major)
+            MAJOR=$((MAJOR + 1))
+            MINOR=0
+            PATCH=0
+            ;;
+        minor)
+            MINOR=$((MINOR + 1))
+            PATCH=0
+            ;;
+        patch)
+            PATCH=$((PATCH + 1))
+            ;;
+        *)
+            echo "✗ Invalid bump type '$BUMP'. Use: major, minor, or patch"
+            exit 1
+            ;;
+    esac
+
+    VERSION="${MAJOR}.${MINOR}.${PATCH}"
+    TAG="v${VERSION}"
+
+    echo "Bumping version: $CURRENT → $VERSION"
+
+    # Update version in project.godot
+    sed -i "s/config\/version=\"$CURRENT\"/config\/version=\"$VERSION\"/" project.godot
+
+    # Update version in export_presets.cfg
+    sed -i "s/short_version=\"$CURRENT\"/short_version=\"$VERSION\"/g" export_presets.cfg
+    sed -i "s/version\/name=\"$CURRENT\"/version\/name=\"$VERSION\"/g" export_presets.cfg
+    sed -i "s|application/version=\"$CURRENT\"|application/version=\"$VERSION\"|g" export_presets.cfg
+
+    # Update version in build_info.gd
+    sed -i "s/const VERSION := \"$CURRENT\"/const VERSION := \"$VERSION\"/" core/build_info.gd
+
+    # Commit the version bump
+    git add project.godot export_presets.cfg core/build_info.gd
+    git commit -m "bump version to $VERSION"
+    git push origin HEAD
 
     # Get the previous tag for changelog range
     PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
