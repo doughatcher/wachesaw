@@ -13,23 +13,23 @@ var move_count: int = 0
 # ─── Layout ──────────────────────────────────────────────────────
 
 ## White home row layout (row 4, bottom from visual perspective).
-## Matches spec §2.2: Hunter, River Runner, Chief, Keeper, Trader
+## Matches monsiv: Chief, River Runner, Hunter, Keeper, Trader
 const WHITE_LAYOUT: Array = [
-	Types.PieceType.HUNTER,
-	Types.PieceType.RIVER_RUNNER,
 	Types.PieceType.CHIEF,
+	Types.PieceType.RIVER_RUNNER,
+	Types.PieceType.HUNTER,
 	Types.PieceType.KEEPER,
 	Types.PieceType.TRADER,
 ]
 
 ## Black home row layout (row 0, top).
-## Mirrored: Trader, Keeper, Chief, River Runner, Hunter
+## Mirrored: Trader, Keeper, Hunter, River Runner, Chief
 const BLACK_LAYOUT: Array = [
 	Types.PieceType.TRADER,
 	Types.PieceType.KEEPER,
-	Types.PieceType.CHIEF,
-	Types.PieceType.RIVER_RUNNER,
 	Types.PieceType.HUNTER,
+	Types.PieceType.RIVER_RUNNER,
+	Types.PieceType.CHIEF,
 ]
 
 # ─── Construction ────────────────────────────────────────────────

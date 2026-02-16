@@ -325,45 +325,30 @@ func _draw_piece_at(center: Vector2, cell: Dictionary, alpha: float) -> void:
 	var cs := cell_size
 	var pc := center
 	var is_white: bool = cell["player"] == Types.Player.WHITE
-	var radius := cs * 0.38
 
-	# Drop shadow
-	var shadow_c := Color(0, 0, 0, 0.35 * alpha)
-	draw_circle(pc + Vector2(1.5, 3.0), radius + 1.0, shadow_c)
-
-	# Outer rim
-	var rim_c := WHITE_RIM if is_white else BLACK_RIM
-	rim_c.a = alpha
-	draw_circle(pc, radius + 1.5, rim_c)
-
-	# Main fill
-	var fill_c := WHITE_FILL if is_white else BLACK_FILL
-	fill_c.a = alpha
-	draw_circle(pc, radius, fill_c)
-
-	# Inner highlight
-	var top_c := WHITE_TOP if is_white else BLACK_TOP
-	top_c.a = alpha
-	draw_circle(pc + Vector2(-1.5, -2.0), radius * 0.82, top_c)
-
-	# Flatten center
-	draw_circle(pc, radius * 0.72, fill_c)
-
-	# Bottom shadow
-	var bottom_shadow := Color(0, 0, 0, 0.12 * alpha) if is_white else Color(0, 0, 0, 0.2 * alpha)
-	draw_circle(pc + Vector2(0, 2.0), radius * 0.65, bottom_shadow)
-	draw_circle(pc, radius * 0.65, fill_c)
-
-	# Chess piece symbol
+	# Chess piece symbol only - no disc background
 	var syms: Array = PIECE_CHARS[cell["type"]]
 	var sym: String = syms[0] if is_white else syms[1]
-	var lcolor := WHITE_LETTER if is_white else BLACK_LETTER
-	lcolor.a = alpha
-	var fsize := clampi(int(cs * 0.62), 24, 56)
+	# High contrast: pure white pieces with black outline, pure black with white outline
+	var lcolor := Color(1, 1, 1, alpha) if is_white else Color(0.05, 0.05, 0.05, alpha)
+	var fsize := clampi(int(cs * 0.72), 28, 64)
 	var draw_font: Font = symbol_font if symbol_font else font
+
 	var ts := draw_font.get_string_size(sym, HORIZONTAL_ALIGNMENT_LEFT, -1, fsize)
 	var ascent := draw_font.get_ascent(fsize)
-	draw_string(draw_font, Vector2(pc.x - ts.x / 2.0, pc.y + ascent * 0.36), sym, HORIZONTAL_ALIGNMENT_LEFT, -1, fsize, lcolor)
+	var text_pos := Vector2(pc.x - ts.x / 2.0, pc.y + ascent * 0.36)
+
+	# Thick contrasting outline
+	var outline_color := Color(0.05, 0.05, 0.05, alpha) if is_white else Color(0.95, 0.95, 0.95, alpha)
+	var outline_w := maxf(cs * 0.022, 2.0)
+	for ox in [-outline_w, 0.0, outline_w]:
+		for oy in [-outline_w, 0.0, outline_w]:
+			if ox == 0.0 and oy == 0.0:
+				continue
+			draw_string(draw_font, text_pos + Vector2(ox, oy), sym, HORIZONTAL_ALIGNMENT_LEFT, -1, fsize, outline_color)
+
+	# Main glyph on top
+	draw_string(draw_font, text_pos, sym, HORIZONTAL_ALIGNMENT_LEFT, -1, fsize, lcolor)
 
 func _draw_capture_corners(rect: Rect2) -> void:
 	var s := cell_size * 0.22

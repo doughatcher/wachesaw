@@ -59,11 +59,11 @@
   "layout": {
     "white": {
       "row": 4,
-      "pieces": ["HUNTER", "RIVER_RUNNER", "CHIEF", "KEEPER", "TRADER"]
+      "pieces": ["CHIEF", "RIVER_RUNNER", "HUNTER", "KEEPER", "TRADER"]
     },
     "black": {
       "row": 0,
-      "pieces": ["TRADER", "KEEPER", "CHIEF", "RIVER_RUNNER", "HUNTER"]
+      "pieces": ["TRADER", "KEEPER", "HUNTER", "RIVER_RUNNER", "CHIEF"]
     }
   },
   "rules": {
