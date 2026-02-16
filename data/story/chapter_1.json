@@ -1,6 +1,7 @@
 {
   "chapter": 1,
   "title": "The Gathering Storm",
+  "default_background": "forest",
   "steps": [
     {
       "type": "dialog",

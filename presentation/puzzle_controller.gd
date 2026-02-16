@@ -39,6 +39,7 @@ var failed_attempts: int = 0
 @onready var skip_btn: Button = $BottomBar/SkipButton
 @onready var menu_btn: Button = $TopBar/MenuButton
 @onready var hint_label: Label = $HintLabel
+@onready var background: Control = %Background
 
 var history: Array[Board] = []
 var pending_after_anim: Callable = Callable()
@@ -47,6 +48,10 @@ var pending_after_anim: Callable = Callable()
 
 func _ready() -> void:
 	puzzle_data = GameSettings.story_puzzle_data
+
+	# Set animated background theme
+	if background and background.has_method("set_theme_by_name"):
+		background.set_theme_by_name(GameSettings.story_background)
 
 	puzzle_id = puzzle_data.get("id", "unknown")
 	puzzle_title = puzzle_data.get("title", "Puzzle")

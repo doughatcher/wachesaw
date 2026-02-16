@@ -1,6 +1,7 @@
 {
   "chapter": 5,
   "title": "The Final Stand",
+  "default_background": "dark",
   "steps": [
     {
       "type": "dialog",

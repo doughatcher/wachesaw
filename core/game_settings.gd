@@ -9,3 +9,4 @@ var difficulty: int = 3
 
 var story_dialog_data: Array = []   # Dialog lines for the current dialog scene
 var story_puzzle_data: Dictionary = {}  # Puzzle config for the current puzzle scene
+var story_background: String = "forest"  # Background theme for current story step

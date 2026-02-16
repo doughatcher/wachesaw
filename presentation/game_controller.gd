@@ -39,12 +39,17 @@ var history: Array[Board] = []
 @onready var captured_white_label: Label = $CapturedBar/CapturedWhiteLabel
 @onready var captured_black_label: Label = $CapturedBar/CapturedBlackLabel
 @onready var fade_overlay: ColorRect = $FadeOverlay
+@onready var background: Control = %Background
 
 # ---- Initialization ----
 
 func _ready() -> void:
 	mode = GameMode.AI if GameSettings.game_mode == 0 else GameMode.LOCAL
 	difficulty = GameSettings.difficulty
+
+	# Set random animated background
+	if background and background.has_method("set_random_theme"):
+		background.set_random_theme()
 
 	board_view.cell_clicked.connect(_on_cell_clicked)
 	board_view.animation_finished.connect(_on_animation_finished)

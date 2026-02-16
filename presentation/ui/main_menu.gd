@@ -8,6 +8,7 @@ extends Control
 @onready var difficulty_buttons: HBoxContainer = %DifficultyButtons
 @onready var difficulty_label: Label = %DifficultyLabel
 @onready var fade_overlay: ColorRect = %FadeOverlay
+@onready var background: Control = %Background
 
 var selected_difficulty: int = 3
 
@@ -17,6 +18,10 @@ func _ready() -> void:
 	play_local_btn.pressed.connect(_on_play_local)
 	_create_difficulty_buttons()
 	_update_difficulty_label()
+
+	# Set random animated background
+	if background and background.has_method("set_random_theme"):
+		background.set_random_theme()
 
 	# Fade in from black
 	if fade_overlay:

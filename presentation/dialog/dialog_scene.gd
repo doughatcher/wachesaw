@@ -5,7 +5,7 @@ extends Control
 
 # ─── Nodes ───────────────────────────────────────────────────────
 
-@onready var background: ColorRect = $Background
+@onready var background: Control = %Background
 @onready var portrait_rect: TextureRect = $DialogPanel/HBox/PortraitRect
 @onready var speaker_label: Label = $DialogPanel/HBox/TextVBox/SpeakerLabel
 @onready var dialog_text: RichTextLabel = $DialogPanel/HBox/TextVBox/DialogText
@@ -35,6 +35,10 @@ const PORTRAIT_COLORS: Dictionary = {
 func _ready() -> void:
 	lines = GameSettings.story_dialog_data
 	skip_btn.pressed.connect(_on_skip)
+
+	# Set animated background theme
+	if background.has_method("set_theme_by_name"):
+		background.set_theme_by_name(GameSettings.story_background)
 
 	if lines.is_empty():
 		SceneManager.advance_story()

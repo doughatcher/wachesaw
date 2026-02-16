@@ -1,6 +1,7 @@
 {
   "chapter": 3,
   "title": "Into the Darkness",
+  "default_background": "sky",
   "steps": [
     {
       "type": "dialog",

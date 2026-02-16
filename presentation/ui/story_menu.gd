@@ -4,10 +4,14 @@ extends Control
 
 @onready var back_btn: Button = $TopBar/BackButton
 @onready var chapter_list: VBoxContainer = $CenterContainer/VBox/ChapterList
+@onready var background: Control = %Background
 
 func _ready() -> void:
 	back_btn.pressed.connect(_on_back)
 	_build_chapter_list()
+
+	if background and background.has_method("set_theme_by_name"):
+		background.set_theme_by_name("forest")
 
 func _build_chapter_list() -> void:
 	for child in chapter_list.get_children():

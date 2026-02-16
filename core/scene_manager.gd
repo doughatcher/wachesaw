@@ -17,6 +17,7 @@ var story_active: bool = false
 var story_chapter: int = 1
 var story_steps: Array = []
 var story_step_index: int = 0
+var story_default_background: String = "forest"
 
 # ─── Setup ───────────────────────────────────────────────────────
 
@@ -61,6 +62,7 @@ func start_story(chapter: int) -> void:
 	story_active = true
 	story_chapter = chapter
 	story_steps = StoryData.get_chapter_steps(chapter)
+	story_default_background = StoryData.get_chapter_default_background(chapter)
 	story_step_index = 0
 	_load_current_step()
 
@@ -85,9 +87,11 @@ func _load_current_step() -> void:
 	match step_type:
 		"dialog":
 			GameSettings.story_dialog_data = step.get("lines", [])
+			GameSettings.story_background = step.get("background", story_default_background)
 			change_scene("res://scenes/dialog.tscn")
 		"puzzle":
 			GameSettings.story_puzzle_data = step
+			GameSettings.story_background = step.get("background", story_default_background)
 			change_scene("res://scenes/puzzle.tscn")
 		_:
 			push_warning("SceneManager: Unknown step type: %s" % step_type)

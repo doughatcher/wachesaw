@@ -1,6 +1,7 @@
 {
   "chapter": 2,
   "title": "Shadows at the Border",
+  "default_background": "river",
   "steps": [
     {
       "type": "dialog",

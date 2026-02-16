@@ -1,6 +1,7 @@
 {
   "chapter": 4,
   "title": "The Dark Stronghold",
+  "default_background": "dark",
   "steps": [
     {
       "type": "dialog",

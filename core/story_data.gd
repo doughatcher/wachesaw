@@ -42,6 +42,10 @@ static func get_chapter_title(chapter_num: int) -> String:
 	var data := load_chapter(chapter_num)
 	return data.get("title", "Chapter %d" % chapter_num)
 
+static func get_chapter_default_background(chapter_num: int) -> String:
+	var data := load_chapter(chapter_num)
+	return data.get("default_background", "forest")
+
 static func get_chapter_steps(chapter_num: int) -> Array:
 	var data := load_chapter(chapter_num)
 	return data.get("steps", [])
