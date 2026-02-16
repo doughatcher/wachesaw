@@ -58,6 +58,10 @@ func save_progress() -> void:
 	var err := _config.save(SAVE_PATH)
 	if err != OK:
 		push_error("StoryProgress: Failed to save: %s" % error_string(err))
+		return
+	# On web, flush the virtual filesystem to IndexedDB so saves persist
+	if OS.has_feature("web"):
+		_sync_web_fs()
 
 func load_progress() -> void:
 	if FileAccess.file_exists(SAVE_PATH):
@@ -69,3 +73,14 @@ func load_progress() -> void:
 func reset_progress() -> void:
 	_config = ConfigFile.new()
 	save_progress()
+
+func _sync_web_fs() -> void:
+	# Godot's web export uses Emscripten's virtual filesystem backed by IndexedDB.
+	# FS.syncfs(false, ...) flushes pending writes so data survives page reloads.
+	JavaScriptBridge.eval("
+		if (typeof FS !== 'undefined' && FS.syncfs) {
+			FS.syncfs(false, function(err) {
+				if (err) console.warn('FS.syncfs error:', err);
+			});
+		}
+	")
