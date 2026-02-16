@@ -29,11 +29,11 @@ jobs:
 
       - name: Setup export templates
         run: |
-          mkdir -p /root/.local/share/godot/export_templates/4.4.stable
-          ln -sf /root/.local/share/godot/export_templates/4.4-stable/* \
-                 /root/.local/share/godot/export_templates/4.4.stable/ 2>/dev/null || true
-          # barichello/godot-ci already has templates; ensure the dot-separated path exists
-          ls /root/.local/share/godot/export_templates/
+          # barichello/godot-ci puts templates under /root/ but Actions runs as
+          # a user whose HOME is /github/home. Link them into place.
+          TEMPLATES_SRC=$(find /root/.local/share/godot/export_templates -maxdepth 1 -type d | tail -1)
+          mkdir -p /github/home/.local/share/godot/export_templates
+          ln -sf "$TEMPLATES_SRC" /github/home/.local/share/godot/export_templates/4.4.stable
 
       - name: Build web export
         run: |
