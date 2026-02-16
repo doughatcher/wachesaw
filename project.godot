@@ -6,7 +6,7 @@
 
 config/name="Wachesaw"
 config/description="Happy Hunting… or Place of Great Weeping?"
-config/version="0.1.1"
+config/version="0.1.2"
 run/main_scene="res://scenes/main_menu.tscn"
 config/features=PackedStringArray("4.4")
 config/icon="res://icon.svg"
