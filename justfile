@@ -74,7 +74,7 @@ build-linux:
 # Build for macOS (export from Linux, notarize on Mac)
 build-macos:
     mkdir -p builds/macos
-    godot --headless --export-release "macOS" builds/macos/wachesaw.dmg
+    godot --headless --export-release "macOS" builds/macos/wachesaw.zip
     @echo "✓ macOS build complete: builds/macos/"
 
 # Build for Windows

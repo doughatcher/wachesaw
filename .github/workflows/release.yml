@@ -32,7 +32,7 @@ jobs:
             build_dir: builds/windows
           - preset: "macOS"
             artifact: wachesaw-macos
-            export_path: builds/macos/wachesaw.dmg
+            export_path: builds/macos/wachesaw.zip
             build_dir: builds/macos
           - preset: "Web"
             artifact: wachesaw-web
@@ -64,7 +64,12 @@ jobs:
       - name: Package artifact
         run: |
           cd ${{ matrix.build_dir }}
-          zip -r /tmp/${{ matrix.artifact }}.zip .
+          # macOS export already produces a .zip, just copy it
+          if [ -f "*.zip" ] || ls *.zip 1>/dev/null 2>&1; then
+            cp *.zip /tmp/${{ matrix.artifact }}.zip 2>/dev/null || zip -r /tmp/${{ matrix.artifact }}.zip .
+          else
+            zip -r /tmp/${{ matrix.artifact }}.zip .
+          fi
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -75,7 +80,7 @@ jobs:
 
   upload-release-assets:
     needs: build
-    if: github.event_name == 'release'
+    if: always() && github.event_name == 'release' && !cancelled()
     runs-on: ubuntu-latest
 
     steps:
