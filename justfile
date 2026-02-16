@@ -53,12 +53,14 @@ run-headless:
 
 # Build for web (works on Linux — test on any device via browser)
 build-web:
+    git rev-parse --short HEAD > core/git_sha.txt
     mkdir -p builds/web
     godot --headless --export-release "Web" builds/web/index.html
     @echo "✓ Web build complete: builds/web/"
 
 # Build for web (debug)
 build-web-debug:
+    git rev-parse --short HEAD > core/git_sha.txt
     mkdir -p builds/web
     godot --headless --export-debug "Web" builds/web/index.html
     @echo "✓ Web debug build complete: builds/web/"

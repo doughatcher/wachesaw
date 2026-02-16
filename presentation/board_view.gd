@@ -82,6 +82,11 @@ const WIN_FLASH_DURATION := 1.5
 # Board flash overlay
 var board_flash_alpha: float = 0.0
 
+# Move ripple effect
+var ripple_t: float = -1.0
+var ripple_pos: Vector2 = Vector2.ZERO
+const RIPPLE_DURATION := 0.8
+
 func _ready() -> void:
 	font = ThemeDB.fallback_font
 	symbol_font = load("res://presentation/fonts/NotoSansSymbols2-Regular.ttf")
@@ -125,6 +130,13 @@ func _process(delta: float) -> void:
 		win_flash_t += delta
 		if win_flash_t > WIN_FLASH_DURATION:
 			win_flash_t = -1.0
+		needs_redraw = true
+
+	# Move ripple
+	if ripple_t >= 0.0:
+		ripple_t += delta
+		if ripple_t > RIPPLE_DURATION:
+			ripple_t = -1.0
 		needs_redraw = true
 
 	if needs_redraw or themed:
@@ -333,7 +345,52 @@ func _draw() -> void:
 				_draw_piece_at(origin + Vector2(c * cs + cs / 2.0, r * cs + cs / 2.0), cell, 1.0)
 
 	# Border
-	draw_rect(Rect2(origin, Vector2(board_px, board_px)), color_border, false, 2.0)
+	if themed:
+		# Pulsing base border
+		var border_pulse := 0.7 + sin(board_time * 1.2) * 0.3
+		var bc := color_border
+		bc.a = border_pulse
+		draw_rect(Rect2(origin, Vector2(board_px, board_px)), bc, false, 2.5)
+
+		# Soft traveling highlight along border edges
+		var perimeter := board_px * 4.0
+		var glow_speed := 0.08
+		var glow_frac := fmod(board_time * glow_speed, 1.0)
+		var gc := piece_glow_color if piece_glow_color.a > 0 else Color(0.7, 0.8, 1.0, 0.5)
+		# Draw a brightened segment of the border instead of orbiting circles
+		var seg_len := board_px * 0.4  # segment covers ~10% of perimeter
+		for gi in 2:
+			var frac := fmod(glow_frac + gi * 0.5, 1.0)
+			var seg_start := frac * perimeter
+			var seg_end := seg_start + seg_len
+			var ga := 0.2 if gi == 0 else 0.12
+			var gc2 := gc
+			gc2.a = ga
+			_draw_border_segment(origin, board_px, seg_start, seg_end, perimeter, gc2, 3.0)
+
+		# Pulsing corner brackets
+		var corner_len := cs * 0.25
+		var corner_alpha := 0.45 + sin(board_time * 2.0) * 0.25
+		var cc := piece_glow_color if piece_glow_color.a > 0 else Color(0.7, 0.8, 1.0)
+		cc.a = corner_alpha
+		var cw := 2.5
+		# Top-left
+		draw_line(origin, origin + Vector2(corner_len, 0), cc, cw)
+		draw_line(origin, origin + Vector2(0, corner_len), cc, cw)
+		# Top-right
+		var tr := origin + Vector2(board_px, 0)
+		draw_line(tr, tr + Vector2(-corner_len, 0), cc, cw)
+		draw_line(tr, tr + Vector2(0, corner_len), cc, cw)
+		# Bottom-left
+		var bl := origin + Vector2(0, board_px)
+		draw_line(bl, bl + Vector2(corner_len, 0), cc, cw)
+		draw_line(bl, bl + Vector2(0, -corner_len), cc, cw)
+		# Bottom-right
+		var br := origin + Vector2(board_px, board_px)
+		draw_line(br, br + Vector2(-corner_len, 0), cc, cw)
+		draw_line(br, br + Vector2(0, -corner_len), cc, cw)
+	else:
+		draw_rect(Rect2(origin, Vector2(board_px, board_px)), color_border, false, 2.0)
 
 	# Draw animated pieces on top (so they appear above the board)
 	if animating:
@@ -363,6 +420,21 @@ func _draw() -> void:
 		var win_color := Color("#7fa650") if win_player == Types.Player.WHITE else Color("#c05050")
 		win_color.a = pulse * fade * 0.25
 		draw_rect(Rect2(origin, Vector2(board_px, board_px)), win_color)
+
+	# Move ripple effect
+	if ripple_t >= 0.0:
+		var rt := ripple_t / RIPPLE_DURATION
+		var ripple_radius := cs * 0.3 + cs * 1.8 * rt
+		var ripple_alpha := (1.0 - rt) * 0.45
+		var rc := piece_glow_color if piece_glow_color.a > 0 else Color(0.7, 0.8, 1.0)
+		rc.a = ripple_alpha
+		draw_arc(ripple_pos, ripple_radius, 0, TAU, 36, rc, 2.5)
+		# Second ring, slightly delayed
+		if rt > 0.15:
+			var rt2 := (rt - 0.15) / 0.85
+			var radius2 := cs * 0.3 + cs * 1.3 * rt2
+			rc.a = (1.0 - rt2) * 0.25
+			draw_arc(ripple_pos, radius2, 0, TAU, 36, rc, 1.5)
 
 	# Coordinate labels
 	var label_size := clampi(int(cs * 0.14), 9, 13)
@@ -434,6 +506,32 @@ func _draw_capture_corners(rect: Rect2) -> void:
 	pts = PackedVector2Array([br_pt, br_pt + Vector2(-s, 0), br_pt + Vector2(0, -s)])
 	draw_colored_polygon(pts, color_capture_corner)
 
+func _perimeter_point(origin: Vector2, board_px: float, dist: float) -> Vector2:
+	if dist < board_px:
+		return origin + Vector2(dist, 0)
+	elif dist < board_px * 2:
+		return origin + Vector2(board_px, dist - board_px)
+	elif dist < board_px * 3:
+		return origin + Vector2(board_px - (dist - board_px * 2), board_px)
+	else:
+		return origin + Vector2(0, board_px - (dist - board_px * 3))
+
+func _draw_border_segment(origin: Vector2, board_px: float, seg_start: float, seg_end: float, perimeter: float, color: Color, width: float) -> void:
+	var steps := 16
+	var step_size := (seg_end - seg_start) / steps
+	for i in steps:
+		var d0 := fmod(seg_start + i * step_size, perimeter)
+		var d1 := fmod(seg_start + (i + 1) * step_size, perimeter)
+		var p0 := _perimeter_point(origin, board_px, d0)
+		var p1 := _perimeter_point(origin, board_px, d1)
+		# Fade alpha towards edges of the segment
+		var frac := float(i) / steps
+		var edge_fade := sin(frac * PI)  # 0 at ends, 1 in middle
+		var sc := color
+		sc.a = color.a * edge_fade
+		if p0.distance_to(p1) < board_px:  # skip corner wraps
+			draw_line(p0, p1, sc, width)
+
 func _find_valid_move(row: int, col: int):
 	for m in valid_moves:
 		if m["row"] == row and m["col"] == col:
@@ -457,4 +555,9 @@ func clear_selection() -> void:
 func set_last_move(from_row: int, from_col: int, to_row: int, to_col: int) -> void:
 	last_move_from = Vector2i(from_row, from_col)
 	last_move_to = Vector2i(to_row, to_col)
+	# Trigger ripple at destination
+	if themed and to_row >= 0:
+		var cs := cell_size
+		ripple_pos = board_origin + Vector2(to_col * cs + cs / 2.0, to_row * cs + cs / 2.0)
+		ripple_t = 0.0
 	queue_redraw()
