@@ -1,0 +1,57 @@
+name: Deploy Web Build to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.4
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup export templates
+        run: |
+          mkdir -p /root/.local/share/godot/export_templates/4.4.stable
+          ln -sf /root/.local/share/godot/export_templates/4.4-stable/* \
+                 /root/.local/share/godot/export_templates/4.4.stable/ 2>/dev/null || true
+          # barichello/godot-ci already has templates; ensure the dot-separated path exists
+          ls /root/.local/share/godot/export_templates/
+
+      - name: Build web export
+        run: |
+          mkdir -p builds/web
+          godot --headless --export-release "Web" builds/web/index.html
+
+      - name: Add COOP/COEP headers config
+        run: |
+          # GitHub Pages doesn't support custom headers natively,
+          # but the Godot web template already handles this.
+          # Ensure the service worker and files are in place.
+          ls -la builds/web/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: builds/web
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
