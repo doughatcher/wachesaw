@@ -216,11 +216,11 @@ func _update_ui() -> void:
 		var winner_name := "White" if winner == Types.Player.WHITE else "Black"
 		var flavor := ""
 		if mode == GameMode.AI:
-			flavor = " — Happy Hunting!" if winner == Types.Player.WHITE else " — Place of Great Weeping…"
+			flavor = " - Happy Hunting!" if winner == Types.Player.WHITE else " - Place of Great Weeping..."
 		status_label.text = "%s wins!%s" % [winner_name, flavor]
 		status_label.add_theme_color_override("font_color", Color("#7fa650"))
 	elif thinking:
-		status_label.text = "AI thinking…"
+		status_label.text = "AI thinking..."
 		status_label.remove_theme_color_override("font_color")
 	else:
 		var turn_name := "White" if turn == Types.Player.WHITE else "Black"

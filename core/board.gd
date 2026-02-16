@@ -131,12 +131,12 @@ func move_to_notation(fr: int, fc: int, tr: int, tc: int, move_type: Types.MoveT
 	var piece = get_cell(fr, fc)
 	if piece == null:
 		return "?"
-	var sym := Types.get_symbol(piece["type"], piece["player"])
+	var letter := Types.get_letter(piece["type"])
 	var dest := Types.COL_LABELS[tc] + Types.ROW_LABELS[tr]
 
 	if move_type == Types.MoveType.SWAP:
-		return sym + "⇄" + dest
+		return letter + "sw" + dest
 	elif get_cell(tr, tc) != null:
-		return sym + "×" + dest
+		return letter + "x" + dest
 	else:
-		return sym + dest
+		return letter + dest

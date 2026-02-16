@@ -42,9 +42,9 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 
 func _gui_input(event: InputEvent) -> void:
+	# Only handle mouse button — emulate_mouse_from_touch converts touch→mouse,
+	# so handling both types causes select-then-immediately-deselect.
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		_handle_click(event.position)
-	elif event is InputEventScreenTouch and event.pressed:
 		_handle_click(event.position)
 
 func _handle_click(pos: Vector2) -> void:
@@ -101,7 +101,7 @@ func _draw() -> void:
 
 			# Draw swap indicator
 			if move_info != null and move_info["type"] == Types.MoveType.SWAP:
-				draw_string(font, rect.position + Vector2(rect.size.x - 18, 16), "⇄", HORIZONTAL_ALIGNMENT_RIGHT, -1, 11, Color("#1a5090"))
+				draw_string(font, rect.position + Vector2(rect.size.x - 18, 16), "sw", HORIZONTAL_ALIGNMENT_RIGHT, -1, 11, Color("#1a5090"))
 
 			# Draw piece
 			if cell != null:
