@@ -1,10 +1,12 @@
-## Main menu — mode selection and difficulty picker.
+## Main menu -- mode selection and difficulty picker.
+## Includes fade-in/fade-out scene transitions.
 extends Control
 
 @onready var play_ai_btn: Button = %PlayAIButton
 @onready var play_local_btn: Button = %PlayLocalButton
 @onready var difficulty_buttons: HBoxContainer = %DifficultyButtons
 @onready var difficulty_label: Label = %DifficultyLabel
+@onready var fade_overlay: ColorRect = %FadeOverlay
 
 var selected_difficulty: int = 3
 
@@ -13,6 +15,13 @@ func _ready() -> void:
 	play_local_btn.pressed.connect(_on_play_local)
 	_create_difficulty_buttons()
 	_update_difficulty_label()
+
+	# Fade in from black
+	if fade_overlay:
+		fade_overlay.color = Color(0, 0, 0, 1)
+		var tween := create_tween()
+		tween.tween_property(fade_overlay, "color:a", 0.0, 0.35)
+		tween.tween_callback(func(): fade_overlay.visible = false)
 
 func _create_difficulty_buttons() -> void:
 	for child in difficulty_buttons.get_children():
@@ -64,4 +73,14 @@ func _on_play_local() -> void:
 func _start_game(vs_ai: bool) -> void:
 	GameSettings.game_mode = 0 if vs_ai else 1
 	GameSettings.difficulty = selected_difficulty
-	get_tree().change_scene_to_file("res://scenes/game.tscn")
+	_fade_to_scene("res://scenes/game.tscn")
+
+func _fade_to_scene(scene_path: String) -> void:
+	if fade_overlay:
+		fade_overlay.visible = true
+		fade_overlay.color = Color(0, 0, 0, 0)
+		var tween := create_tween()
+		tween.tween_property(fade_overlay, "color:a", 1.0, 0.3)
+		tween.tween_callback(func(): get_tree().change_scene_to_file(scene_path))
+	else:
+		get_tree().change_scene_to_file(scene_path)

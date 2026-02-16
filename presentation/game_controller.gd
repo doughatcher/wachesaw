@@ -1,5 +1,6 @@
 ## Game controller -- manages game flow, turn logic, AI, and UI.
 ## Responsive: adapts layout to viewport size.
+## Handles animations, scene transitions, and win effects.
 extends Control
 
 # ---- Mode ----
@@ -37,6 +38,7 @@ var history: Array[Board] = []
 @onready var difficulty_selector: OptionButton = $TopBar/DifficultySelector
 @onready var captured_white_label: Label = $CapturedBar/CapturedWhiteLabel
 @onready var captured_black_label: Label = $CapturedBar/CapturedBlackLabel
+@onready var fade_overlay: ColorRect = $FadeOverlay
 
 # ---- Initialization ----
 
@@ -45,6 +47,7 @@ func _ready() -> void:
 	difficulty = GameSettings.difficulty
 
 	board_view.cell_clicked.connect(_on_cell_clicked)
+	board_view.animation_finished.connect(_on_animation_finished)
 	new_game_btn.pressed.connect(_on_new_game)
 	menu_btn.pressed.connect(_on_menu)
 	undo_btn.pressed.connect(_on_undo)
@@ -62,6 +65,13 @@ func _ready() -> void:
 	# Default info panel open on wide screens only
 	info_visible = _is_wide()
 	_apply_info_layout()
+
+	# Fade in from black
+	if fade_overlay:
+		fade_overlay.color = Color(0, 0, 0, 1)
+		var tween := create_tween()
+		tween.tween_property(fade_overlay, "color:a", 0.0, 0.35)
+		tween.tween_callback(func(): fade_overlay.visible = false)
 
 	start_game()
 
@@ -82,7 +92,6 @@ func _apply_info_layout() -> void:
 		return
 	info_panel.visible = info_visible
 	var wide := _is_wide()
-	# On wide screens, info panel sits beside the board; on narrow, it overlays
 	if wide and info_visible:
 		var panel_w := 240.0
 		var right_inset := -panel_w - 8.0
@@ -92,7 +101,6 @@ func _apply_info_layout() -> void:
 	else:
 		board_view.offset_right = 0.0
 		if not wide and info_visible:
-			# Overlay: full width panel on mobile
 			info_panel.anchor_left = 0.0
 			info_panel.offset_left = 0.0
 		else:
@@ -115,6 +123,7 @@ func _set_bars_right(r: float) -> void:
 		captured_bar.offset_right = r
 
 func start_game() -> void:
+	var old_board := board
 	board = Board.create()
 	turn = Types.Player.WHITE
 	winner = -1
@@ -130,13 +139,30 @@ func start_game() -> void:
 	board_view.clear_selection()
 	board_view.last_move_from = Vector2i(-1, -1)
 	board_view.last_move_to = Vector2i(-1, -1)
-	board_view.update_display(board)
+
+	# Animate pieces back to starting positions if there was a previous game
+	if old_board != null:
+		board_view.animate_reset(old_board, board)
+	else:
+		board_view.update_display(board)
 	_update_ui()
+
+# ---- Animation Callback ----
+
+var pending_after_anim: Callable = Callable()
+
+func _on_animation_finished() -> void:
+	if pending_after_anim.is_valid():
+		var cb := pending_after_anim
+		pending_after_anim = Callable()
+		cb.call()
 
 # ---- Input ----
 
 func _on_cell_clicked(row: int, col: int) -> void:
 	if winner != -1 or thinking:
+		return
+	if board_view.animating:
 		return
 	if mode == GameMode.AI and turn == Types.Player.BLACK:
 		return
@@ -178,8 +204,18 @@ func _find_valid_move(row: int, col: int):
 func _execute_move(fr: int, fc: int, tr: int, tc: int, move_type: Types.MoveType) -> void:
 	history.append(board.clone())
 	var notation := board.move_to_notation(fr, fc, tr, tc, move_type)
+
+	# Capture info before move
+	var captured_cell = null
+	var captured_pos := Vector2i(-1, -1)
+	if move_type == Types.MoveType.MOVE:
+		var target = board.get_cell(tr, tc)
+		if target != null:
+			captured_cell = target.duplicate()
+			captured_pos = Vector2i(tr, tc)
+
 	var result := board.do_move(fr, fc, tr, tc, move_type)
-	board = result["board"]
+	var new_board: Board = result["board"]
 	var piece: Dictionary = result["piece"]
 	var captured = result["captured"]
 
@@ -194,25 +230,34 @@ func _execute_move(fr: int, fc: int, tr: int, tc: int, move_type: Types.MoveType
 
 	_deselect()
 	board_view.set_last_move(fr, fc, tr, tc)
-	board_view.update_display(board)
 
-	var win_result: int = WinChecker.check_win(board, turn, piece, tr, move_type)
-	if win_result != -1:
-		winner = win_result
-		_update_ui()
-		return
+	# Animate the move instead of instant display
+	if move_type == Types.MoveType.SWAP:
+		board_view.animate_swap(Vector2i(fr, fc), Vector2i(tr, tc), new_board)
+	else:
+		board_view.animate_move(Vector2i(fr, fc), Vector2i(tr, tc), captured_pos, captured_cell, new_board)
 
+	# Set up post-animation callback
+	var win_result: int = WinChecker.check_win(new_board, turn, piece, tr, move_type)
 	var next_player := Types.opponent(turn)
-	if not WinChecker.has_legal_moves(board, next_player):
-		winner = turn
+	var no_legal := not WinChecker.has_legal_moves(new_board, next_player)
+
+	pending_after_anim = func():
+		board = new_board
+		if win_result != -1:
+			winner = win_result
+			board_view.trigger_win_effect(winner)
+			_update_ui()
+			return
+		if no_legal:
+			winner = turn
+			board_view.trigger_win_effect(winner)
+			_update_ui()
+			return
+		turn = next_player
 		_update_ui()
-		return
-
-	turn = next_player
-	_update_ui()
-
-	if mode == GameMode.AI and turn == Types.Player.BLACK and winner == -1:
-		_ai_move()
+		if mode == GameMode.AI and turn == Types.Player.BLACK and winner == -1:
+			_ai_move()
 
 func _ai_move() -> void:
 	thinking = true
@@ -228,6 +273,8 @@ func _ai_move() -> void:
 
 func _on_undo() -> void:
 	if history.is_empty() or winner != -1:
+		return
+	if board_view.animating:
 		return
 	if mode == GameMode.AI and history.size() >= 2:
 		board = history[-2]
@@ -265,21 +312,21 @@ func _update_ui() -> void:
 		status_label.text = "%s to move" % tname
 		status_label.remove_theme_color_override("font_color")
 
-	# Captured pieces display
+	# Captured pieces display using chess symbols
 	if captured_white_label:
 		var cap_w := ""
 		for t in captured_white:
-			cap_w += Types.get_letter(t) + " "
+			cap_w += Types.get_symbol(t, Types.Player.BLACK) + " "
 		captured_white_label.text = cap_w.strip_edges()
-		captured_white_label.add_theme_font_size_override("font_size", 13)
+		captured_white_label.add_theme_font_size_override("font_size", 16)
 		captured_white_label.add_theme_color_override("font_color", Color(1, 1, 1, 0.5))
 
 	if captured_black_label:
 		var cap_b := ""
 		for t in captured_black:
-			cap_b += Types.get_letter(t) + " "
+			cap_b += Types.get_symbol(t, Types.Player.WHITE) + " "
 		captured_black_label.text = cap_b.strip_edges()
-		captured_black_label.add_theme_font_size_override("font_size", 13)
+		captured_black_label.add_theme_font_size_override("font_size", 16)
 		captured_black_label.add_theme_color_override("font_color", Color(1, 1, 1, 0.5))
 
 	_update_move_log()
@@ -320,8 +367,20 @@ func _on_new_game() -> void:
 	start_game()
 
 func _on_menu() -> void:
-	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+	_fade_to_scene("res://scenes/main_menu.tscn")
 
 func _on_difficulty_changed(index: int) -> void:
 	difficulty = index + 1
 	start_game()
+
+# ---- Scene Transitions ----
+
+func _fade_to_scene(scene_path: String) -> void:
+	if fade_overlay:
+		fade_overlay.visible = true
+		fade_overlay.color = Color(0, 0, 0, 0)
+		var tween := create_tween()
+		tween.tween_property(fade_overlay, "color:a", 1.0, 0.3)
+		tween.tween_callback(func(): get_tree().change_scene_to_file(scene_path))
+	else:
+		get_tree().change_scene_to_file(scene_path)
