@@ -59,8 +59,8 @@ func _ready() -> void:
 	difficulty_selector.selected = difficulty - 1
 
 	get_viewport().size_changed.connect(_on_viewport_resized)
-	# Default info panel open on wide screens
-	info_visible = get_viewport_rect().size.x > 700
+	# Default info panel open on wide screens only
+	info_visible = _is_wide()
 	_apply_info_layout()
 
 	start_game()
@@ -74,25 +74,45 @@ func _toggle_info() -> void:
 	info_visible = not info_visible
 	_apply_info_layout()
 
+func _is_wide() -> bool:
+	return get_viewport_rect().size.x > 700
+
 func _apply_info_layout() -> void:
 	if not info_panel or not board_view:
 		return
 	info_panel.visible = info_visible
-	var right_inset := -268.0 if info_visible else 0.0
-	board_view.offset_right = right_inset
-	# Also inset the top bar, status bar, bottom bar, and captured bar
+	var wide := _is_wide()
+	# On wide screens, info panel sits beside the board; on narrow, it overlays
+	if wide and info_visible:
+		var panel_w := 240.0
+		var right_inset := -panel_w - 8.0
+		board_view.offset_right = right_inset
+		info_panel.offset_left = -panel_w
+		_set_bars_right(right_inset)
+	else:
+		board_view.offset_right = 0.0
+		if not wide and info_visible:
+			# Overlay: full width panel on mobile
+			info_panel.anchor_left = 0.0
+			info_panel.offset_left = 0.0
+		else:
+			info_panel.anchor_left = 1.0
+			info_panel.offset_left = -240.0
+		_set_bars_right(-8.0)
+
+func _set_bars_right(r: float) -> void:
 	var top_bar := $TopBar as Control
 	var status_bar := $StatusBar as Control
 	var bottom_bar := $BottomBar as Control
 	var captured_bar := $CapturedBar as Control
 	if top_bar:
-		top_bar.offset_right = right_inset - 8.0
+		top_bar.offset_right = r
 	if status_bar:
-		status_bar.offset_right = right_inset - 8.0
+		status_bar.offset_right = r
 	if bottom_bar:
-		bottom_bar.offset_right = right_inset - 8.0
+		bottom_bar.offset_right = r
 	if captured_bar:
-		captured_bar.offset_right = right_inset - 12.0
+		captured_bar.offset_right = r
 
 func start_game() -> void:
 	board = Board.create()
