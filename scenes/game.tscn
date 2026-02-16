@@ -20,136 +20,197 @@ anchor_bottom = 1.0
 mouse_filter = 2
 color = Color(0.192, 0.18, 0.168, 1)
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="TopBar" type="HBoxContainer" parent="."]
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = 10
 anchor_right = 1.0
-anchor_bottom = 1.0
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 8
+offset_left = 8.0
+offset_top = 4.0
+offset_right = -8.0
+offset_bottom = 32.0
+grow_horizontal = 2
 
-[node name="VBox" type="VBoxContainer" parent="MarginContainer"]
-layout_mode = 2
-
-[node name="TopBar" type="HBoxContainer" parent="MarginContainer/VBox"]
-layout_mode = 2
-
-[node name="MenuButton" type="Button" parent="MarginContainer/VBox/TopBar"]
+[node name="MenuButton" type="Button" parent="TopBar"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Menu"
 flat = true
 
-[node name="Spacer1" type="Control" parent="MarginContainer/VBox/TopBar"]
+[node name="Spacer1" type="Control" parent="TopBar"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Title" type="Label" parent="MarginContainer/VBox/TopBar"]
+[node name="Title" type="Label" parent="TopBar"]
 layout_mode = 2
 text = "WACHESAW"
 horizontal_alignment = 1
 
-[node name="Spacer2" type="Control" parent="MarginContainer/VBox/TopBar"]
+[node name="Spacer2" type="Control" parent="TopBar"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="DifficultySelector" type="OptionButton" parent="MarginContainer/VBox/TopBar"]
+[node name="DifficultySelector" type="OptionButton" parent="TopBar"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="StatusPanel" type="PanelContainer" parent="MarginContainer/VBox"]
-layout_mode = 2
+[node name="StatusBar" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 8.0
+offset_top = 32.0
+offset_right = -8.0
+offset_bottom = 54.0
+grow_horizontal = 2
 
-[node name="StatusLabel" type="Label" parent="MarginContainer/VBox/StatusPanel"]
+[node name="StatusLabel" type="Label" parent="StatusBar"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "White to move"
 horizontal_alignment = 1
 
-[node name="ContentHBox" type="HBoxContainer" parent="MarginContainer/VBox"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 16
-alignment = 1
-
-[node name="BoardColumn" type="VBoxContainer" parent="MarginContainer/VBox/ContentHBox"]
-layout_mode = 2
-
-[node name="CapturedTop" type="Label" parent="MarginContainer/VBox/ContentHBox/BoardColumn"]
+[node name="BoardView" type="Control" parent="."]
 unique_name_in_owner = true
-layout_mode = 2
-custom_minimum_size = Vector2(0, 24)
-
-[node name="BoardView" type="Control" parent="MarginContainer/VBox/ContentHBox/BoardColumn"]
-unique_name_in_owner = true
-layout_mode = 2
-custom_minimum_size = Vector2(424, 448)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 58.0
+offset_bottom = -66.0
+mouse_filter = 0
 script = ExtResource("2")
 
-[node name="CapturedBottom" type="Label" parent="MarginContainer/VBox/ContentHBox/BoardColumn"]
-unique_name_in_owner = true
-layout_mode = 2
-custom_minimum_size = Vector2(0, 24)
-
-[node name="ButtonRow" type="HBoxContainer" parent="MarginContainer/VBox/ContentHBox/BoardColumn"]
-layout_mode = 2
+[node name="BottomBar" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = -44.0
+offset_right = -8.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 0
 theme_override_constants/separation = 8
 
-[node name="NewGameButton" type="Button" parent="MarginContainer/VBox/ContentHBox/BoardColumn/ButtonRow"]
+[node name="NewGameButton" type="Button" parent="BottomBar"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "New Game"
 
-[node name="UndoButton" type="Button" parent="MarginContainer/VBox/ContentHBox/BoardColumn/ButtonRow"]
+[node name="UndoButton" type="Button" parent="BottomBar"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Undo"
 
-[node name="SidePanel" type="VBoxContainer" parent="MarginContainer/VBox/ContentHBox"]
+[node name="InfoButton" type="Button" parent="BottomBar"]
+unique_name_in_owner = true
 layout_mode = 2
-custom_minimum_size = Vector2(200, 0)
+text = "Info"
 
-[node name="PiecesHeader" type="Label" parent="MarginContainer/VBox/ContentHBox/SidePanel"]
+[node name="CapturedBar" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = -62.0
+offset_right = -12.0
+offset_bottom = -46.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="CapturedWhiteLabel" type="Label" parent="CapturedBar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+horizontal_alignment = 0
+
+[node name="CapturedBlackLabel" type="Label" parent="CapturedBar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+horizontal_alignment = 2
+
+[node name="InfoPanel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -260.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="InfoMargin" type="MarginContainer" parent="InfoPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="InfoVBox" type="VBoxContainer" parent="InfoPanel/InfoMargin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="InfoHeader" type="HBoxContainer" parent="InfoPanel/InfoMargin/InfoVBox"]
+layout_mode = 2
+
+[node name="InfoTitle" type="Label" parent="InfoPanel/InfoMargin/InfoVBox/InfoHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "GAME INFO"
+
+[node name="CloseButton" type="Button" parent="InfoPanel/InfoMargin/InfoVBox/InfoHeader"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "X"
+flat = true
+
+[node name="PiecesHeader" type="Label" parent="InfoPanel/InfoMargin/InfoVBox"]
 layout_mode = 2
 text = "PIECES"
 
-[node name="PieceList" type="RichTextLabel" parent="MarginContainer/VBox/ContentHBox/SidePanel"]
+[node name="PieceList" type="RichTextLabel" parent="InfoPanel/InfoMargin/InfoVBox"]
 layout_mode = 2
-custom_minimum_size = Vector2(0, 180)
+custom_minimum_size = Vector2(0, 120)
 bbcode_enabled = true
-text = "[b]K[/b]  Chief -- 1 sq any direction
-[b]Q[/b]  Keeper -- 1 sq any direction
-[b]R[/b]  Hunter -- 1 sq orthogonal
-[b]B[/b]  River Runner -- 1 sq diagonal
-[b]N[/b]  Trader -- L-jump, leaps pieces"
+text = "K  Chief -- any direction
+Q  Keeper -- any direction
+R  Hunter -- orthogonal only
+B  River Runner -- diagonal only
+N  Trader -- L-jump, leaps"
 
-[node name="WinHeader" type="Label" parent="MarginContainer/VBox/ContentHBox/SidePanel"]
+[node name="WinHeader" type="Label" parent="InfoPanel/InfoMargin/InfoVBox"]
 layout_mode = 2
 text = "WIN CONDITIONS"
 
-[node name="WinInfo" type="RichTextLabel" parent="MarginContainer/VBox/ContentHBox/SidePanel"]
+[node name="WinInfo" type="RichTextLabel" parent="InfoPanel/InfoMargin/InfoVBox"]
 layout_mode = 2
 custom_minimum_size = Vector2(0, 80)
 bbcode_enabled = true
-text = "Capture opponent's Chief to win
-Reach their back row to win
-Chief and Trader cannot cross-win
-Swap any 2 adjacent friendly pieces"
+text = "Capture opponent's Chief
+Reach their back row
+K and N cannot cross-win
+Swap any 2 adjacent allies"
 
-[node name="MovesHeader" type="Label" parent="MarginContainer/VBox/ContentHBox/SidePanel"]
+[node name="MovesHeader" type="Label" parent="InfoPanel/InfoMargin/InfoVBox"]
 layout_mode = 2
 text = "MOVES"
 
-[node name="MoveLogScroll" type="ScrollContainer" parent="MarginContainer/VBox/ContentHBox/SidePanel"]
+[node name="MoveLogScroll" type="ScrollContainer" parent="InfoPanel/InfoMargin/InfoVBox"]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="MoveLogContainer" type="VBoxContainer" parent="MarginContainer/VBox/ContentHBox/SidePanel/MoveLogScroll"]
+[node name="MoveLogContainer" type="VBoxContainer" parent="InfoPanel/InfoMargin/InfoVBox/MoveLogScroll"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
