@@ -143,3 +143,62 @@ clean-cache:
 
 # Full clean
 clean-all: clean clean-cache
+
+# ─── Release ─────────────────────────────────────────────────────
+
+# Create a GitHub release with auto-generated notes. Usage: just release 0.2.0
+release version:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    TAG="v{{version}}"
+
+    # Ensure working tree is clean
+    if [[ -n "$(git status --porcelain)" ]]; then
+        echo "✗ Working tree is dirty. Commit or stash changes first."
+        exit 1
+    fi
+
+    # Get the previous tag for changelog range
+    PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+
+    # Build release notes
+    NOTES="## Wachesaw $TAG\n\n"
+    NOTES+="**Released:** $(date +%Y-%m-%d)\n\n"
+
+    if [[ -n "$PREV_TAG" ]]; then
+        NOTES+="### Changes since $PREV_TAG\n\n"
+        NOTES+="$(git log ${PREV_TAG}..HEAD --pretty=format:'- %s (%h)' --no-merges)\n\n"
+    else
+        NOTES+="### Changes\n\n"
+        NOTES+="$(git log --pretty=format:'- %s (%h)' --no-merges -20)\n\n"
+    fi
+
+    NOTES+="### Downloads\n\n"
+    NOTES+="| Platform | File |\n"
+    NOTES+="|----------|------|\n"
+    NOTES+="| Linux x86_64 | \`wachesaw-linux-x86_64.zip\` |\n"
+    NOTES+="| Windows x86_64 | \`wachesaw-windows-x86_64.zip\` |\n"
+    NOTES+="| macOS | \`wachesaw-macos.zip\` |\n"
+    NOTES+="| Web | \`wachesaw-web.zip\` |\n\n"
+    NOTES+="### Build Info\n\n"
+    NOTES+="- Godot 4.4\n"
+    NOTES+="- Commit: $(git rev-parse --short HEAD)\n"
+
+    echo -e "$NOTES"
+    echo ""
+    echo "Creating release $TAG..."
+
+    # Tag and push
+    git tag -a "$TAG" -m "Release $TAG"
+    git push origin "$TAG"
+
+    # Create GitHub release (triggers the CI build + upload)
+    echo -e "$NOTES" | gh release create "$TAG" \
+        --title "Wachesaw $TAG" \
+        --notes-file - \
+        --latest
+
+    echo ""
+    echo "✓ Release $TAG created!"
+    echo "  GitHub Actions will now build and attach desktop binaries."
+    echo "  Monitor at: https://github.com/doughatcher/wachesaw/actions"

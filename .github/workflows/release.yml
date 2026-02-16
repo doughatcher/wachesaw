@@ -1,0 +1,95 @@
+name: Build Desktop Releases
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to build (e.g. v0.1.0)"
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.4
+
+    strategy:
+      matrix:
+        include:
+          - preset: "Linux/X11"
+            artifact: wachesaw-linux-x86_64
+            export_path: builds/linux/wachesaw.x86_64
+            build_dir: builds/linux
+          - preset: "Windows Desktop"
+            artifact: wachesaw-windows-x86_64
+            export_path: builds/windows/wachesaw.exe
+            build_dir: builds/windows
+          - preset: "macOS"
+            artifact: wachesaw-macos
+            export_path: builds/macos/wachesaw.dmg
+            build_dir: builds/macos
+          - preset: "Web"
+            artifact: wachesaw-web
+            export_path: builds/web/index.html
+            build_dir: builds/web
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # full history for git SHA
+
+      - name: Setup export templates
+        run: |
+          TEMPLATES_SRC=$(find /root/.local/share/godot/export_templates -maxdepth 1 -type d | tail -1)
+          mkdir -p /github/home/.local/share/godot/export_templates
+          ln -sf "$TEMPLATES_SRC" /github/home/.local/share/godot/export_templates/4.4.stable
+
+      - name: Generate build info
+        run: |
+          git rev-parse --short HEAD > core/git_sha.txt
+          echo "SHA: $(cat core/git_sha.txt)"
+
+      - name: Build ${{ matrix.preset }}
+        run: |
+          mkdir -p ${{ matrix.build_dir }}
+          godot --headless --export-release "${{ matrix.preset }}" ${{ matrix.export_path }}
+
+      - name: Package artifact
+        run: |
+          cd ${{ matrix.build_dir }}
+          zip -r /tmp/${{ matrix.artifact }}.zip .
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: /tmp/${{ matrix.artifact }}.zip
+          retention-days: 7
+
+  upload-release-assets:
+    needs: build
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Upload to release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          for zip in artifacts/**/*.zip; do
+            echo "Uploading $zip..."
+            gh release upload "$RELEASE_TAG" "$zip" \
+              --repo "${{ github.repository }}" \
+              --clobber
+          done
