@@ -1,0 +1,216 @@
+{
+  "chapter": 5,
+  "title": "The Final Stand",
+  "steps": [
+    {
+      "type": "dialog",
+      "lines": [
+        { "speaker": null, "portrait": null, "text": "Nume stands before the source of the dark force — a swirling vortex of shadow. This is the final battle." },
+        { "speaker": "Dark Force", "portrait": "dark_force", "text": "You cannot defeat what has no form, little Chief." },
+        { "speaker": "Nume", "portrait": "nume_neutral", "text": "Everything has a weakness. I will find yours." }
+      ]
+    },
+    {
+      "type": "puzzle",
+      "id": "ch5_p01",
+      "title": "First Clash",
+      "description": "Begin the final battle.",
+      "player": "white",
+      "hint": "Keeper captures the Chief diagonally.",
+      "board": [
+        [null, null, null, null, null],
+        [null, null, {"type": "CHIEF", "player": "black"}, null, null],
+        [null, {"type": "KEEPER", "player": "white"}, null, null, null],
+        [null, null, null, null, null],
+        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+      ],
+      "win_condition": { "type": "capture_chief", "max_moves": 1 },
+      "opponent_moves": []
+    },
+    {
+      "type": "puzzle",
+      "id": "ch5_p02",
+      "title": "Shadow Dodge",
+      "description": "Cross the field swiftly.",
+      "player": "white",
+      "hint": "River Runner crosses diagonally to the back row.",
+      "board": [
+        [null, null, null, null, null],
+        [null, null, null, null, {"type": "RIVER_RUNNER", "player": "white"}],
+        [null, null, null, null, null],
+        [null, null, null, null, null],
+        [{"type": "CHIEF", "player": "white"}, null, null, null, {"type": "CHIEF", "player": "black"}]
+      ],
+      "win_condition": { "type": "cross_piece", "max_moves": 1 },
+      "opponent_moves": []
+    },
+    {
+      "type": "dialog",
+      "lines": [
+        { "speaker": "Dark Force", "portrait": "dark_force", "text": "Your tricks will not work here. My defenses are absolute." },
+        { "speaker": "Nume", "portrait": "nume_neutral", "text": "Then I will break them." }
+      ]
+    },
+    {
+      "type": "puzzle",
+      "id": "ch5_p03",
+      "title": "Breaking the Shield",
+      "description": "Penetrate the dark defense in two moves.",
+      "player": "white",
+      "hint": "Move the Hunter to cut off escape, then capture.",
+      "board": [
+        [null, {"type": "CHIEF", "player": "black"}, null, null, null],
+        [null, null, null, null, null],
+        [null, null, {"type": "HUNTER", "player": "white"}, null, null],
+        [null, {"type": "KEEPER", "player": "white"}, null, null, null],
+        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+      ],
+      "win_condition": { "type": "capture_chief", "max_moves": 2 },
+      "opponent_moves": ["Ka5"]
+    },
+    {
+      "type": "puzzle",
+      "id": "ch5_p04",
+      "title": "Vortex Run",
+      "description": "Race through the vortex — cross in one move.",
+      "player": "white",
+      "hint": "The Hunter moves straight to row 0.",
+      "board": [
+        [null, null, null, null, null],
+        [null, {"type": "HUNTER", "player": "white"}, null, null, null],
+        [null, null, null, null, null],
+        [null, null, null, null, null],
+        [{"type": "CHIEF", "player": "white"}, null, null, null, {"type": "CHIEF", "player": "black"}]
+      ],
+      "win_condition": { "type": "cross_piece", "max_moves": 1 },
+      "opponent_moves": []
+    },
+    {
+      "type": "puzzle",
+      "id": "ch5_p05",
+      "title": "Dark Knight",
+      "description": "The Trader delivers a critical blow.",
+      "player": "white",
+      "hint": "L-jump to capture the Chief.",
+      "board": [
+        [null, null, null, null, null],
+        [null, null, null, {"type": "CHIEF", "player": "black"}, null],
+        [null, {"type": "TRADER", "player": "white"}, null, null, null],
+        [null, null, null, null, null],
+        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+      ],
+      "win_condition": { "type": "capture_chief", "max_moves": 1 },
+      "opponent_moves": []
+    },
+    {
+      "type": "dialog",
+      "lines": [
+        { "speaker": "Dark Force", "portrait": "dark_force", "text": "Enough! Face my full power!" },
+        { "speaker": "Nume", "portrait": "nume_neutral", "text": "I face it gladly." }
+      ]
+    },
+    {
+      "type": "puzzle",
+      "id": "ch5_p06",
+      "title": "Full Power",
+      "description": "Overcome the strongest defense yet.",
+      "player": "white",
+      "hint": "Swap to reposition, then cross the Keeper.",
+      "board": [
+        [null, null, null, null, null],
+        [null, {"type": "CHIEF", "player": "white"}, null, null, null],
+        [{"type": "KEEPER", "player": "white"}, null, null, null, null],
+        [null, null, null, null, null],
+        [null, null, null, null, {"type": "CHIEF", "player": "black"}]
+      ],
+      "win_condition": { "type": "cross_piece", "max_moves": 2 },
+      "opponent_moves": ["Kd1"]
+    },
+    {
+      "type": "puzzle",
+      "id": "ch5_p07",
+      "title": "Shadow's End",
+      "description": "The darkness weakens — strike now.",
+      "player": "white",
+      "hint": "Direct capture with the Hunter.",
+      "board": [
+        [null, null, null, null, null],
+        [null, null, null, null, null],
+        [null, null, {"type": "CHIEF", "player": "black"}, null, null],
+        [null, null, {"type": "HUNTER", "player": "white"}, null, null],
+        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+      ],
+      "win_condition": { "type": "capture_chief", "max_moves": 1 },
+      "opponent_moves": []
+    },
+    {
+      "type": "puzzle",
+      "id": "ch5_p08",
+      "title": "Light Breaks Through",
+      "description": "Cross the Keeper to shatter the darkness.",
+      "player": "white",
+      "hint": "The Keeper can cross diagonally.",
+      "board": [
+        [null, null, null, null, null],
+        [null, {"type": "KEEPER", "player": "white"}, null, null, null],
+        [null, null, null, null, null],
+        [null, null, null, null, null],
+        [{"type": "CHIEF", "player": "white"}, null, null, null, {"type": "CHIEF", "player": "black"}]
+      ],
+      "win_condition": { "type": "cross_piece", "max_moves": 1 },
+      "opponent_moves": []
+    },
+    {
+      "type": "puzzle",
+      "id": "ch5_p09",
+      "title": "Penultimate Strike",
+      "description": "One move from victory.",
+      "player": "white",
+      "hint": "The Trader leaps to capture.",
+      "board": [
+        [null, null, null, null, {"type": "CHIEF", "player": "black"}],
+        [null, null, null, null, null],
+        [null, null, null, {"type": "TRADER", "player": "white"}, null],
+        [null, null, null, null, null],
+        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+      ],
+      "win_condition": { "type": "capture_chief", "max_moves": 1 },
+      "opponent_moves": []
+    },
+    {
+      "type": "dialog",
+      "lines": [
+        { "speaker": "Dark Force", "portrait": "dark_force", "text": "No... this cannot be..." },
+        { "speaker": "Nume", "portrait": "nume_neutral", "text": "It ends now. For my people. For the Waccamaw." }
+      ]
+    },
+    {
+      "type": "puzzle",
+      "id": "ch5_p10",
+      "title": "The Final Move",
+      "description": "End the dark force once and for all.",
+      "player": "white",
+      "hint": "The Keeper delivers the final blow.",
+      "board": [
+        [null, null, null, null, null],
+        [null, null, null, null, null],
+        [null, null, {"type": "CHIEF", "player": "black"}, null, null],
+        [null, {"type": "KEEPER", "player": "white"}, null, null, null],
+        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+      ],
+      "win_condition": { "type": "capture_chief", "max_moves": 1 },
+      "opponent_moves": []
+    },
+    {
+      "type": "dialog",
+      "lines": [
+        { "speaker": null, "portrait": null, "text": "The vortex collapses. The shadows dissolve. Light returns to the Waccamaw lands." },
+        { "speaker": "Nume", "portrait": "nume_neutral", "text": "It is done." },
+        { "speaker": "Elder", "portrait": "elder_neutral", "text": "You have done what no Chief before you could. The people are safe because of you." },
+        { "speaker": null, "portrait": null, "text": "And so Nume returns home, a hero. The lands know peace once more." },
+        { "speaker": null, "portrait": null, "text": "THE END" },
+        { "speaker": null, "portrait": null, "text": "Thank you for playing the Story Mode of Wachesaw." }
+      ]
+    }
+  ]
+}

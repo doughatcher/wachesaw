@@ -2,6 +2,7 @@
 ## Includes fade-in/fade-out scene transitions.
 extends Control
 
+@onready var story_mode_btn: Button = %StoryModeButton
 @onready var play_ai_btn: Button = %PlayAIButton
 @onready var play_local_btn: Button = %PlayLocalButton
 @onready var difficulty_buttons: HBoxContainer = %DifficultyButtons
@@ -11,6 +12,7 @@ extends Control
 var selected_difficulty: int = 3
 
 func _ready() -> void:
+	story_mode_btn.pressed.connect(_on_story_mode)
 	play_ai_btn.pressed.connect(_on_play_ai)
 	play_local_btn.pressed.connect(_on_play_local)
 	_create_difficulty_buttons()
@@ -63,6 +65,9 @@ func _on_difficulty_selected(level: int) -> void:
 
 func _update_difficulty_label() -> void:
 	difficulty_label.text = Types.DIFFICULTY_NAMES[selected_difficulty]
+
+func _on_story_mode() -> void:
+	SceneManager.change_scene("res://scenes/story_menu.tscn")
 
 func _on_play_ai() -> void:
 	_start_game(true)

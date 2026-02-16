@@ -1,0 +1,79 @@
+[gd_scene load_steps=2 format=3 uid="uid://story_menu_scene"]
+
+[ext_resource type="Script" path="res://presentation/ui/story_menu.gd" id="1"]
+
+[node name="StoryMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.12, 0.11, 0.1, 1)
+
+[node name="TopBar" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 8.0
+offset_top = 4.0
+offset_right = -8.0
+offset_bottom = 32.0
+grow_horizontal = 2
+
+[node name="BackButton" type="Button" parent="TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "← Back"
+flat = true
+
+[node name="Spacer" type="Control" parent="TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="TopBar"]
+layout_mode = 2
+text = "STORY MODE"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 20
+
+[node name="Spacer2" type="Control" parent="TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 40.0
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Subtitle" type="Label" parent="CenterContainer/VBox"]
+layout_mode = 2
+text = "The Journey of Nume"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.85, 0.75, 0.5, 1)
+
+[node name="Spacer" type="Control" parent="CenterContainer/VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 16)
+
+[node name="ChapterList" type="VBoxContainer" parent="CenterContainer/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1

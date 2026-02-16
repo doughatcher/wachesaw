@@ -1,0 +1,204 @@
+{
+  "chapter": 4,
+  "title": "The Dark Stronghold",
+  "steps": [
+    {
+      "type": "dialog",
+      "lines": [
+        { "speaker": null, "portrait": null, "text": "Nume reaches the heart of the dark force's domain — a fortress of shadow and stone." },
+        { "speaker": "Nume", "portrait": "nume_neutral", "text": "There is no turning back now." }
+      ]
+    },
+    {
+      "type": "puzzle",
+      "id": "ch4_p01",
+      "title": "Breach the Gates",
+      "description": "Break through with a Trader leap.",
+      "player": "white",
+      "hint": "The Trader jumps over the wall of defenders.",
+      "board": [
+        [null, null, null, {"type": "CHIEF", "player": "black"}, null],
+        [null, null, {"type": "HUNTER", "player": "black"}, null, null],
+        [null, null, null, null, {"type": "TRADER", "player": "white"}],
+        [null, null, null, null, null],
+        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+      ],
+      "win_condition": { "type": "capture_chief", "max_moves": 1 },
+      "opponent_moves": []
+    },
+    {
+      "type": "puzzle",
+      "id": "ch4_p02",
+      "title": "Inner Courtyard",
+      "description": "Cross the Keeper past the defenses.",
+      "player": "white",
+      "hint": "Move diagonally to the back row.",
+      "board": [
+        [null, null, null, null, null],
+        [null, null, {"type": "KEEPER", "player": "white"}, null, null],
+        [null, null, null, null, null],
+        [null, null, null, null, null],
+        [{"type": "CHIEF", "player": "white"}, null, null, null, {"type": "CHIEF", "player": "black"}]
+      ],
+      "win_condition": { "type": "cross_piece", "max_moves": 1 },
+      "opponent_moves": []
+    },
+    {
+      "type": "dialog",
+      "lines": [
+        { "speaker": "Dark Force", "portrait": "dark_force", "text": "You dare enter my stronghold?" },
+        { "speaker": "Nume", "portrait": "nume_neutral", "text": "Your reign of terror ends here." }
+      ]
+    },
+    {
+      "type": "puzzle",
+      "id": "ch4_p03",
+      "title": "Throne Room Approach",
+      "description": "Use a two-move combination to capture.",
+      "player": "white",
+      "hint": "Move the Hunter up to cut off escape, then capture with the Keeper.",
+      "board": [
+        [null, null, null, null, {"type": "CHIEF", "player": "black"}],
+        [null, null, null, null, null],
+        [null, null, {"type": "HUNTER", "player": "white"}, {"type": "KEEPER", "player": "white"}, null],
+        [null, null, null, null, null],
+        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+      ],
+      "win_condition": { "type": "capture_chief", "max_moves": 2 },
+      "opponent_moves": ["Kd1"]
+    },
+    {
+      "type": "puzzle",
+      "id": "ch4_p04",
+      "title": "Shadow Corridor",
+      "description": "Navigate the River Runner through.",
+      "player": "white",
+      "hint": "Diagonal move to cross.",
+      "board": [
+        [null, null, null, null, null],
+        [{"type": "RIVER_RUNNER", "player": "white"}, null, null, null, null],
+        [null, null, null, null, null],
+        [null, null, null, null, null],
+        [null, {"type": "CHIEF", "player": "white"}, null, null, {"type": "CHIEF", "player": "black"}]
+      ],
+      "win_condition": { "type": "cross_piece", "max_moves": 1 },
+      "opponent_moves": []
+    },
+    {
+      "type": "puzzle",
+      "id": "ch4_p05",
+      "title": "The Guardian",
+      "description": "Defeat the guardian to proceed.",
+      "player": "white",
+      "hint": "The Keeper captures the Chief directly.",
+      "board": [
+        [null, null, null, null, null],
+        [null, null, null, null, null],
+        [null, {"type": "CHIEF", "player": "black"}, null, null, null],
+        [{"type": "KEEPER", "player": "white"}, null, null, null, null],
+        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+      ],
+      "win_condition": { "type": "capture_chief", "max_moves": 1 },
+      "opponent_moves": []
+    },
+    {
+      "type": "puzzle",
+      "id": "ch4_p06",
+      "title": "Fortress Swap",
+      "description": "Reposition with a swap to enable crossing.",
+      "player": "white",
+      "hint": "Swap the Keeper and Chief, then cross the Keeper.",
+      "board": [
+        [null, null, null, null, null],
+        [null, null, {"type": "CHIEF", "player": "white"}, null, null],
+        [null, null, {"type": "KEEPER", "player": "white"}, null, null],
+        [null, null, null, null, null],
+        [null, null, null, null, {"type": "CHIEF", "player": "black"}]
+      ],
+      "win_condition": { "type": "cross_piece", "max_moves": 2 },
+      "opponent_moves": ["Kd1"]
+    },
+    {
+      "type": "dialog",
+      "lines": [
+        { "speaker": null, "portrait": null, "text": "The fortress crumbles around Nume as the dark force's power weakens with each victory." }
+      ]
+    },
+    {
+      "type": "puzzle",
+      "id": "ch4_p07",
+      "title": "Collapsing Walls",
+      "description": "Strike while the defenses crumble.",
+      "player": "white",
+      "hint": "Direct capture with the Hunter.",
+      "board": [
+        [null, null, null, null, null],
+        [null, null, null, null, null],
+        [null, null, null, {"type": "CHIEF", "player": "black"}, null],
+        [null, null, null, {"type": "HUNTER", "player": "white"}, null],
+        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+      ],
+      "win_condition": { "type": "capture_chief", "max_moves": 1 },
+      "opponent_moves": []
+    },
+    {
+      "type": "puzzle",
+      "id": "ch4_p08",
+      "title": "Last Line",
+      "description": "Break through the final defenders.",
+      "player": "white",
+      "hint": "Trader leaps over the defenders.",
+      "board": [
+        [null, null, null, null, {"type": "CHIEF", "player": "black"}],
+        [null, null, null, {"type": "RIVER_RUNNER", "player": "black"}, null],
+        [null, null, null, {"type": "TRADER", "player": "white"}, null],
+        [null, null, null, null, null],
+        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+      ],
+      "win_condition": { "type": "capture_chief", "max_moves": 1 },
+      "opponent_moves": []
+    },
+    {
+      "type": "puzzle",
+      "id": "ch4_p09",
+      "title": "Crossing Under Fire",
+      "description": "Cross despite the pressure.",
+      "player": "white",
+      "hint": "The Hunter goes straight to row 0.",
+      "board": [
+        [null, null, null, null, null],
+        [null, null, null, null, {"type": "HUNTER", "player": "white"}],
+        [null, null, null, null, null],
+        [null, null, null, null, null],
+        [{"type": "CHIEF", "player": "white"}, null, null, null, {"type": "CHIEF", "player": "black"}]
+      ],
+      "win_condition": { "type": "cross_piece", "max_moves": 1 },
+      "opponent_moves": []
+    },
+    {
+      "type": "puzzle",
+      "id": "ch4_p10",
+      "title": "Stronghold Falls",
+      "description": "Deliver the decisive blow to the fortress commander.",
+      "player": "white",
+      "hint": "Two-move combination: move Keeper adjacent, then capture.",
+      "board": [
+        [{"type": "CHIEF", "player": "black"}, null, null, null, null],
+        [null, null, null, null, null],
+        [null, null, {"type": "KEEPER", "player": "white"}, null, null],
+        [null, null, null, null, null],
+        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+      ],
+      "win_condition": { "type": "capture_chief", "max_moves": 2 },
+      "opponent_moves": ["Ka4"]
+    },
+    {
+      "type": "dialog",
+      "lines": [
+        { "speaker": null, "portrait": null, "text": "The stronghold falls silent. But deep within, a greater darkness stirs." },
+        { "speaker": "Nume", "portrait": "nume_neutral", "text": "One more battle remains." },
+        { "speaker": null, "portrait": null, "text": "Chapter 4 complete. The final confrontation approaches..." }
+      ]
+    }
+  ]
+}
