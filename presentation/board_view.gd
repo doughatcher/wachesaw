@@ -1,35 +1,41 @@
-## Visual board rendering with animations.
+## Visual board rendering with animations and theme integration.
 ## Dynamically sizes to fill available space. Responsive.
 extends Control
 
 signal cell_clicked(row: int, col: int)
 signal animation_finished()
 
-# Colors
-const COLOR_LIGHT := Color("#f0d9b5")
-const COLOR_DARK := Color("#b58863")
-const COLOR_SELECTED_LIGHT := Color("#829de0")
-const COLOR_SELECTED_DARK := Color("#5c78b8")
-const COLOR_LAST_MOVE_LIGHT := Color("#f5f682")
-const COLOR_LAST_MOVE_DARK := Color("#d9da40")
-const COLOR_CAPTURE_LIGHT := Color("#ee8888")
-const COLOR_CAPTURE_DARK := Color("#c85555")
-const COLOR_SWAP_LIGHT := Color("#88bce8")
-const COLOR_SWAP_DARK := Color("#5c90c0")
-const COLOR_VALID_LIGHT := Color("#c8e898")
-const COLOR_VALID_DARK := Color("#98c060")
-const COLOR_MOVE_DOT := Color(0, 0, 0, 0.22)
-const COLOR_CAPTURE_CORNER := Color(0.75, 0.15, 0.15, 0.65)
+# ─── Default Colors (overridden by theme) ────────────────────────
+
+var color_light := Color("#f0d9b5")
+var color_dark := Color("#b58863")
+var color_selected_light := Color("#829de0")
+var color_selected_dark := Color("#5c78b8")
+var color_last_move_light := Color("#f5f682")
+var color_last_move_dark := Color("#d9da40")
+var color_capture_light := Color("#ee8888")
+var color_capture_dark := Color("#c85555")
+var color_swap_light := Color("#88bce8")
+var color_swap_dark := Color("#5c90c0")
+var color_valid_light := Color("#c8e898")
+var color_valid_dark := Color("#98c060")
+var color_move_dot := Color(0, 0, 0, 0.22)
+var color_capture_corner := Color(0.75, 0.15, 0.15, 0.65)
+var color_border := Color("#3d3a37")
+var color_shadow := Color(0, 0, 0, 0.3)
+var color_label := Color(1, 1, 1, 0.3)
 
 # Piece colors
-const WHITE_FILL := Color("#f5f0e8")
-const WHITE_RIM := Color("#c8c0b0")
-const WHITE_TOP := Color("#fffdf8")
-const WHITE_LETTER := Color("#1a1510")
-const BLACK_FILL := Color("#2e2822")
-const BLACK_RIM := Color("#1a1510")
-const BLACK_TOP := Color("#484038")
-const BLACK_LETTER := Color("#e8dcc8")
+var white_piece_color := Color("#f5f0e8")
+var white_outline_color := Color("#1a1510")
+var black_piece_color := Color("#2e2822")
+var black_outline_color := Color("#e8dcc8")
+
+# Theme effects
+var piece_glow_color := Color(0, 0, 0, 0)
+var cell_shimmer_color := Color(0, 0, 0, 0)
+var themed: bool = false
+var board_time: float = 0.0
 
 # Chess unicode symbols
 const PIECE_CHARS := {
@@ -104,6 +110,7 @@ func _compute_layout() -> void:
 
 func _process(delta: float) -> void:
 	var needs_redraw := false
+	board_time += delta
 
 	# Piece movement animation
 	if animating:
@@ -120,8 +127,36 @@ func _process(delta: float) -> void:
 			win_flash_t = -1.0
 		needs_redraw = true
 
-	if needs_redraw:
+	if needs_redraw or themed:
 		queue_redraw()
+
+## Apply a themed color palette from AnimatedBackground.
+func set_board_palette(palette: Dictionary) -> void:
+	themed = true
+	color_light = palette.get("cell_light", color_light)
+	color_dark = palette.get("cell_dark", color_dark)
+	color_selected_light = palette.get("selected_light", color_selected_light)
+	color_selected_dark = palette.get("selected_dark", color_selected_dark)
+	color_last_move_light = palette.get("last_move_light", color_last_move_light)
+	color_last_move_dark = palette.get("last_move_dark", color_last_move_dark)
+	color_valid_light = palette.get("valid_light", color_valid_light)
+	color_valid_dark = palette.get("valid_dark", color_valid_dark)
+	color_capture_light = palette.get("capture_light", color_capture_light)
+	color_capture_dark = palette.get("capture_dark", color_capture_dark)
+	color_swap_light = palette.get("swap_light", color_swap_light)
+	color_swap_dark = palette.get("swap_dark", color_swap_dark)
+	color_move_dot = palette.get("move_dot", color_move_dot)
+	color_capture_corner = palette.get("capture_corner", color_capture_corner)
+	color_border = palette.get("border", color_border)
+	color_shadow = palette.get("shadow", color_shadow)
+	color_label = palette.get("label", color_label)
+	white_piece_color = palette.get("white_piece", white_piece_color)
+	white_outline_color = palette.get("white_outline", white_outline_color)
+	black_piece_color = palette.get("black_piece", black_piece_color)
+	black_outline_color = palette.get("black_outline", black_outline_color)
+	piece_glow_color = palette.get("piece_glow", piece_glow_color)
+	cell_shimmer_color = palette.get("cell_shimmer", cell_shimmer_color)
+	queue_redraw()
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
@@ -223,7 +258,13 @@ func _draw() -> void:
 	var draw_board := board if board != null else anim_target_board
 
 	# Board shadow
-	draw_rect(Rect2(origin + Vector2(3, 3), Vector2(board_px, board_px)), Color(0, 0, 0, 0.3))
+	draw_rect(Rect2(origin + Vector2(4, 4), Vector2(board_px, board_px)), color_shadow)
+
+	# Outer glow when themed
+	if themed:
+		var glow_c := piece_glow_color
+		glow_c.a = 0.08 + sin(board_time * 0.5) * 0.03
+		draw_rect(Rect2(origin - Vector2(3, 3), Vector2(board_px + 6, board_px + 6)), glow_c)
 
 	# Cells that are currently being animated (skip drawing their pieces normally)
 	var anim_cells: Array[Vector2i] = []
@@ -238,7 +279,7 @@ func _draw() -> void:
 		for c in range(Board.BOARD_SIZE):
 			var rect := Rect2(origin + Vector2(c * cs, r * cs), Vector2(cs, cs))
 			var light: bool = (r + c) % 2 == 0
-			var color: Color = COLOR_LIGHT if light else COLOR_DARK
+			var color: Color = color_light if light else color_dark
 
 			var is_selected: bool = selected_cell.x == r and selected_cell.y == c
 			var is_last: bool = (last_move_from.x == r and last_move_from.y == c) or \
@@ -247,23 +288,33 @@ func _draw() -> void:
 			var cell = draw_board.get_cell(r, c)
 
 			if is_selected:
-				color = COLOR_SELECTED_LIGHT if light else COLOR_SELECTED_DARK
+				color = color_selected_light if light else color_selected_dark
 			elif move_info != null:
 				if move_info["type"] == Types.MoveType.MOVE and cell != null:
-					color = COLOR_CAPTURE_LIGHT if light else COLOR_CAPTURE_DARK
+					color = color_capture_light if light else color_capture_dark
 				elif move_info["type"] == Types.MoveType.SWAP:
-					color = COLOR_SWAP_LIGHT if light else COLOR_SWAP_DARK
+					color = color_swap_light if light else color_swap_dark
 				elif move_info["type"] == Types.MoveType.MOVE:
-					color = COLOR_VALID_LIGHT if light else COLOR_VALID_DARK
+					color = color_valid_light if light else color_valid_dark
 			elif is_last and not is_selected:
-				color = COLOR_LAST_MOVE_LIGHT if light else COLOR_LAST_MOVE_DARK
+				color = color_last_move_light if light else color_last_move_dark
 
 			draw_rect(rect, color)
+
+			# Subtle cell shimmer effect when themed
+			if themed:
+				var shimmer_phase := board_time * 0.8 + r * 1.1 + c * 0.7
+				var shimmer_alpha := (sin(shimmer_phase) * 0.5 + 0.5) * 0.06
+				if light:
+					shimmer_alpha *= 1.5
+				var sc := cell_shimmer_color
+				sc.a = shimmer_alpha
+				draw_rect(rect, sc)
 
 			# Move dot
 			if move_info != null and cell == null and move_info["type"] == Types.MoveType.MOVE:
 				var center := rect.position + rect.size / 2.0
-				draw_circle(center, cs * 0.16, COLOR_MOVE_DOT)
+				draw_circle(center, cs * 0.16, color_move_dot)
 
 			# Capture corner triangles
 			if move_info != null and cell != null and move_info["type"] == Types.MoveType.MOVE:
@@ -271,17 +322,18 @@ func _draw() -> void:
 
 			# Swap indicator dots
 			if move_info != null and move_info["type"] == Types.MoveType.SWAP:
-				var cx := rect.position.x + cs * 0.82
-				var cy := rect.position.y + cs * 0.18
-				draw_circle(Vector2(cx - 4, cy), 3.0, Color("#3070c0"))
-				draw_circle(Vector2(cx + 4, cy), 3.0, Color("#3070c0"))
+				var swap_cx := rect.position.x + cs * 0.82
+				var swap_cy := rect.position.y + cs * 0.18
+				var swap_dot_c := color_swap_light.lightened(0.3)
+				draw_circle(Vector2(swap_cx - 4, swap_cy), 3.0, swap_dot_c)
+				draw_circle(Vector2(swap_cx + 4, swap_cy), 3.0, swap_dot_c)
 
 			# Draw static piece (skip if animating)
 			if cell != null and Vector2i(r, c) not in anim_cells:
 				_draw_piece_at(origin + Vector2(c * cs + cs / 2.0, r * cs + cs / 2.0), cell, 1.0)
 
 	# Border
-	draw_rect(Rect2(origin, Vector2(board_px, board_px)), Color("#3d3a37"), false, 2.0)
+	draw_rect(Rect2(origin, Vector2(board_px, board_px)), color_border, false, 2.0)
 
 	# Draw animated pieces on top (so they appear above the board)
 	if animating:
@@ -316,30 +368,47 @@ func _draw() -> void:
 	var label_size := clampi(int(cs * 0.14), 9, 13)
 	for c in range(Board.BOARD_SIZE):
 		var pos := origin + Vector2(c * cs + cs / 2.0 - 3, board_px + label_size + 4)
-		draw_string(font, pos, Types.COL_LABELS[c], HORIZONTAL_ALIGNMENT_CENTER, -1, label_size, Color(1, 1, 1, 0.3))
+		draw_string(font, pos, Types.COL_LABELS[c], HORIZONTAL_ALIGNMENT_CENTER, -1, label_size, color_label)
 	for r in range(Board.BOARD_SIZE):
 		var pos := origin + Vector2(-label_margin + 4, r * cs + cs / 2.0 + 4)
-		draw_string(font, pos, Types.ROW_LABELS[r], HORIZONTAL_ALIGNMENT_RIGHT, -1, label_size, Color(1, 1, 1, 0.3))
+		draw_string(font, pos, Types.ROW_LABELS[r], HORIZONTAL_ALIGNMENT_RIGHT, -1, label_size, color_label)
 
 func _draw_piece_at(center: Vector2, cell: Dictionary, alpha: float) -> void:
 	var cs := cell_size
 	var pc := center
 	var is_white: bool = cell["player"] == Types.Player.WHITE
 
-	# Chess piece symbol only - no disc background
 	var syms: Array = PIECE_CHARS[cell["type"]]
 	var sym: String = syms[0] if is_white else syms[1]
-	# High contrast: pure white pieces with black outline, pure black with white outline
-	var lcolor := Color(1, 1, 1, alpha) if is_white else Color(0.05, 0.05, 0.05, alpha)
+
+	# Use themed colors
+	var lcolor: Color
+	var outline_color: Color
+	if is_white:
+		lcolor = white_piece_color
+		lcolor.a = alpha
+		outline_color = white_outline_color
+		outline_color.a = alpha
+	else:
+		lcolor = black_piece_color
+		lcolor.a = alpha
+		outline_color = black_outline_color
+		outline_color.a = alpha
+
 	var fsize := clampi(int(cs * 0.72), 28, 64)
 	var draw_font: Font = symbol_font if symbol_font else font
-
 	var ts := draw_font.get_string_size(sym, HORIZONTAL_ALIGNMENT_LEFT, -1, fsize)
 	var ascent := draw_font.get_ascent(fsize)
 	var text_pos := Vector2(pc.x - ts.x / 2.0, pc.y + ascent * 0.36)
 
+	# Piece glow effect when themed
+	if themed and piece_glow_color.a > 0:
+		var glow_alpha := alpha * (0.15 + sin(board_time * 1.5 + pc.x * 0.03 + pc.y * 0.02) * 0.08)
+		var gc := piece_glow_color
+		gc.a = glow_alpha
+		draw_circle(pc, cs * 0.38, gc)
+
 	# Thick contrasting outline
-	var outline_color := Color(0.05, 0.05, 0.05, alpha) if is_white else Color(0.95, 0.95, 0.95, alpha)
 	var outline_w := maxf(cs * 0.022, 2.0)
 	for ox in [-outline_w, 0.0, outline_w]:
 		for oy in [-outline_w, 0.0, outline_w]:
@@ -354,16 +423,16 @@ func _draw_capture_corners(rect: Rect2) -> void:
 	var s := cell_size * 0.22
 	var pts: PackedVector2Array
 	pts = PackedVector2Array([rect.position, rect.position + Vector2(s, 0), rect.position + Vector2(0, s)])
-	draw_colored_polygon(pts, COLOR_CAPTURE_CORNER)
+	draw_colored_polygon(pts, color_capture_corner)
 	var tr_pt := rect.position + Vector2(rect.size.x, 0)
 	pts = PackedVector2Array([tr_pt, tr_pt + Vector2(-s, 0), tr_pt + Vector2(0, s)])
-	draw_colored_polygon(pts, COLOR_CAPTURE_CORNER)
+	draw_colored_polygon(pts, color_capture_corner)
 	var bl_pt := rect.position + Vector2(0, rect.size.y)
 	pts = PackedVector2Array([bl_pt, bl_pt + Vector2(s, 0), bl_pt + Vector2(0, -s)])
-	draw_colored_polygon(pts, COLOR_CAPTURE_CORNER)
+	draw_colored_polygon(pts, color_capture_corner)
 	var br_pt := rect.position + rect.size
 	pts = PackedVector2Array([br_pt, br_pt + Vector2(-s, 0), br_pt + Vector2(0, -s)])
-	draw_colored_polygon(pts, COLOR_CAPTURE_CORNER)
+	draw_colored_polygon(pts, color_capture_corner)
 
 func _find_valid_move(row: int, col: int):
 	for m in valid_moves:

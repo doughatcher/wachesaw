@@ -50,6 +50,8 @@ func _ready() -> void:
 	# Set random animated background
 	if background and background.has_method("set_random_theme"):
 		background.set_random_theme()
+		if background.has_method("get_board_palette"):
+			board_view.set_board_palette(background.get_board_palette())
 
 	board_view.cell_clicked.connect(_on_cell_clicked)
 	board_view.animation_finished.connect(_on_animation_finished)

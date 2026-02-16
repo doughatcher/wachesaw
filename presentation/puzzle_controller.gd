@@ -52,6 +52,8 @@ func _ready() -> void:
 	# Set animated background theme
 	if background and background.has_method("set_theme_by_name"):
 		background.set_theme_by_name(GameSettings.story_background)
+		if background.has_method("get_board_palette"):
+			board_view.set_board_palette(background.get_board_palette())
 
 	puzzle_id = puzzle_data.get("id", "unknown")
 	puzzle_title = puzzle_data.get("title", "Puzzle")

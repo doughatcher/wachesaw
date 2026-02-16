@@ -80,6 +80,122 @@ const THEME_COLORS: Dictionary = {
 	},
 }
 
+# ─── Board Color Palettes ────────────────────────────────────────
+
+const BOARD_PALETTES: Dictionary = {
+	BGTheme.FOREST: {
+		"cell_light":        Color("#4a6a3a"),
+		"cell_dark":         Color("#2e4a22"),
+		"selected_light":    Color("#6a9848"),
+		"selected_dark":     Color("#4a7830"),
+		"last_move_light":   Color("#7aaa50"),
+		"last_move_dark":    Color("#5a8a38"),
+		"valid_light":       Color("#68b848"),
+		"valid_dark":        Color("#489830"),
+		"capture_light":     Color("#a85838"),
+		"capture_dark":      Color("#884028"),
+		"swap_light":        Color("#488868"),
+		"swap_dark":         Color("#306848"),
+		"move_dot":          Color(0.85, 1.0, 0.6, 0.3),
+		"capture_corner":    Color(0.85, 0.3, 0.2, 0.6),
+		"border":            Color("#1a3010"),
+		"shadow":            Color(0, 0, 0, 0.4),
+		"white_piece":       Color("#e8f0d0"),
+		"white_outline":     Color("#1a2810"),
+		"black_piece":       Color("#1a2810"),
+		"black_outline":     Color("#c0d8a0"),
+		"piece_glow":        Color("#b0e870"),
+		"label":             Color(0.7, 0.9, 0.5, 0.4),
+		"cell_shimmer":      Color("#b0e870"),
+	},
+	BGTheme.RIVER: {
+		"cell_light":        Color("#3a5a78"),
+		"cell_dark":         Color("#243a58"),
+		"selected_light":    Color("#4878a8"),
+		"selected_dark":     Color("#305888"),
+		"last_move_light":   Color("#5090b0"),
+		"last_move_dark":    Color("#387098"),
+		"valid_light":       Color("#4898c0"),
+		"valid_dark":        Color("#3078a0"),
+		"capture_light":     Color("#a05848"),
+		"capture_dark":      Color("#804030"),
+		"swap_light":        Color("#3880a0"),
+		"swap_dark":         Color("#286880"),
+		"move_dot":          Color(0.6, 0.85, 1.0, 0.3),
+		"capture_corner":    Color(0.85, 0.3, 0.2, 0.6),
+		"border":            Color("#102030"),
+		"shadow":            Color(0, 0, 0, 0.4),
+		"white_piece":       Color("#d8e8f8"),
+		"white_outline":     Color("#102838"),
+		"black_piece":       Color("#102838"),
+		"black_outline":     Color("#a0c8e8"),
+		"piece_glow":        Color("#90d0f0"),
+		"label":             Color(0.5, 0.75, 1.0, 0.4),
+		"cell_shimmer":      Color("#90d0f0"),
+	},
+	BGTheme.SKY: {
+		"cell_light":        Color("#384870"),
+		"cell_dark":         Color("#242e50"),
+		"selected_light":    Color("#4860a0"),
+		"selected_dark":     Color("#304880"),
+		"last_move_light":   Color("#5068a8"),
+		"last_move_dark":    Color("#384890"),
+		"valid_light":       Color("#5878b8"),
+		"valid_dark":        Color("#405898"),
+		"capture_light":     Color("#985848"),
+		"capture_dark":      Color("#784030"),
+		"swap_light":        Color("#485898"),
+		"swap_dark":         Color("#304078"),
+		"move_dot":          Color(0.8, 0.8, 1.0, 0.3),
+		"capture_corner":    Color(0.85, 0.3, 0.2, 0.6),
+		"border":            Color("#0e1428"),
+		"shadow":            Color(0, 0, 0, 0.5),
+		"white_piece":       Color("#e0e0f0"),
+		"white_outline":     Color("#181830"),
+		"black_piece":       Color("#181830"),
+		"black_outline":     Color("#b0b0d8"),
+		"piece_glow":        Color("#f8f0d8"),
+		"label":             Color(0.7, 0.7, 1.0, 0.4),
+		"cell_shimmer":      Color("#f8f0d8"),
+	},
+	BGTheme.DARK: {
+		"cell_light":        Color("#48304a"),
+		"cell_dark":         Color("#2e1a30"),
+		"selected_light":    Color("#684870"),
+		"selected_dark":     Color("#503058"),
+		"last_move_light":   Color("#604068"),
+		"last_move_dark":    Color("#483050"),
+		"valid_light":       Color("#705080"),
+		"valid_dark":        Color("#583868"),
+		"capture_light":     Color("#904040"),
+		"capture_dark":      Color("#702828"),
+		"swap_light":        Color("#504068"),
+		"swap_dark":         Color("#382850"),
+		"move_dot":          Color(0.7, 0.4, 0.9, 0.3),
+		"capture_corner":    Color(0.85, 0.2, 0.3, 0.6),
+		"border":            Color("#140a18"),
+		"shadow":            Color(0, 0, 0, 0.5),
+		"white_piece":       Color("#d8c8e0"),
+		"white_outline":     Color("#1a0e20"),
+		"black_piece":       Color("#1a0e20"),
+		"black_outline":     Color("#a888b8"),
+		"piece_glow":        Color("#a050c0"),
+		"label":             Color(0.7, 0.4, 0.9, 0.4),
+		"cell_shimmer":      Color("#d070f0"),
+	},
+}
+
+## Returns the board color palette for the active theme.
+func get_board_palette() -> Dictionary:
+	return BOARD_PALETTES[current_theme]
+
+## Returns the current theme name as a string.
+func get_current_theme_name() -> String:
+	for key in THEME_NAMES:
+		if THEME_NAMES[key] == current_theme:
+			return key
+	return "forest"
+
 # ─── Lifecycle ───────────────────────────────────────────────────
 
 func _ready() -> void:
