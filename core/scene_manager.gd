@@ -64,19 +64,40 @@ func start_story(chapter: int) -> void:
 	story_steps = StoryData.get_chapter_steps(chapter)
 	story_default_background = StoryData.get_chapter_default_background(chapter)
 	story_step_index = 0
-	_load_current_step()
+	load_current_step()
 
 func advance_story() -> void:
 	if not story_active:
 		return
 	story_step_index += 1
-	StoryProgress.set_current_position(story_chapter, story_step_index)
 	if story_step_index >= story_steps.size():
+		if MapWatcher.is_watching():
+			# Wrap back to the last puzzle step instead of ending
+			for i in range(story_steps.size() - 1, -1, -1):
+				if story_steps[i] is Dictionary and story_steps[i].get("type") == "puzzle":
+					go_to_step(i)
+					return
+			story_step_index = 0
+			return
 		_on_chapter_complete()
 		return
-	_load_current_step()
+	StoryProgress.set_current_position(story_chapter, story_step_index)
+	load_current_step()
 
-func _load_current_step() -> void:
+func go_to_step(index: int) -> void:
+	if not story_active or story_steps.is_empty():
+		return
+	story_step_index = clampi(index, 0, story_steps.size() - 1)
+	load_current_step()
+
+func get_puzzle_step_indices() -> Array[int]:
+	var indices: Array[int] = []
+	for i in range(story_steps.size()):
+		if story_steps[i] is Dictionary and story_steps[i].get("type") == "puzzle":
+			indices.append(i)
+	return indices
+
+func load_current_step() -> void:
 	if story_step_index >= story_steps.size():
 		_on_chapter_complete()
 		return
@@ -96,6 +117,11 @@ func _load_current_step() -> void:
 		_:
 			push_warning("SceneManager: Unknown step type: %s" % step_type)
 			advance_story()
+
+func get_current_step() -> Dictionary:
+	if story_step_index >= 0 and story_step_index < story_steps.size():
+		return story_steps[story_step_index]
+	return {}
 
 func _on_chapter_complete() -> void:
 	story_active = false

@@ -13,13 +13,13 @@
     {
       "type": "puzzle",
       "id": "ch2_p01",
-      "title": "River Defense!",
+      "title": "River Defense",
       "description": "Capture the advancing enemy Chief.",
       "player": "white",
       "hint": "Your Keeper can reach the enemy Chief diagonally.",
       "board": [
-        [null, null, {"type": "CHIEF", "player": "black"}, null, null],
         [null, null, null, null, null],
+        [null, null, {"type": "CHIEF", "player": "black"}, null, null],
         [null, {"type": "KEEPER", "player": "white"}, null, null, null],
         [null, null, null, null, null],
         [{"type": "CHIEF", "player": "white"}, null, null, null, null]

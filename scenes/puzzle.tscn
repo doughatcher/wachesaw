@@ -119,6 +119,13 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/separation = 8
 
+[node name="PrevButton" type="Button" parent="BottomBar"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+text = "\u25C2 Prev"
+
 [node name="RetryButton" type="Button" parent="BottomBar"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -137,6 +144,13 @@ visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Skip ▸"
+
+[node name="NextButton" type="Button" parent="BottomBar"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Next \u25B8"
 
 [node name="HintLabel" type="Label" parent="."]
 unique_name_in_owner = true

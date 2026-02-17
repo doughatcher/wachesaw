@@ -33,6 +33,7 @@ var _last_content_hash: int = 0  # Used on web (no mod-time access)
 var _poll_timer: float = 0.0
 var _active: bool = false
 var _is_web: bool = false
+var _chapter_loaded: bool = false
 
 # ─── HTTP (web only) ────────────────────────────────────────────
 
@@ -242,15 +243,12 @@ func _parse_and_emit(text: String, source_path: String) -> void:
 		return
 
 	# Detect chapter files (have a "steps" array) vs standalone puzzle files
-	var puzzle_data: Dictionary
 	if data.has("steps") and data["steps"] is Array:
-		puzzle_data = _extract_puzzle_from_chapter(data, source_path)
-		if puzzle_data.is_empty():
-			return  # Error already reported
-	else:
-		# Standalone puzzle file — apply defaults
-		puzzle_data = _apply_defaults(data, source_path)
+		_handle_chapter_update(data, source_path)
+		return
 
+	# Standalone puzzle file — apply defaults
+	var puzzle_data := _apply_defaults(data, source_path)
 	print("[MapWatcher] Loaded: %s — \"%s\"" % [source_path, puzzle_data.get("title", "")])
 	map_changed.emit(puzzle_data)
 
@@ -275,63 +273,72 @@ func _apply_defaults(data: Dictionary, file_path: String) -> Dictionary:
 		d["type"] = "puzzle"
 	return d
 
-## Extract a puzzle step from a story chapter file.
-## Uses GameSettings.map_watch_puzzle_id to find the puzzle by ID.
-## If no ID is set, loads the first puzzle in the chapter.
-func _extract_puzzle_from_chapter(chapter_data: Dictionary, file_path: String) -> Dictionary:
+## Handle chapter file data — sets up SceneManager story mode on first load,
+## hot-reloads the current step on subsequent changes.
+func _handle_chapter_update(chapter_data: Dictionary, source_path: String) -> void:
 	var steps: Array = chapter_data.get("steps", [])
-	var target_id: String = GameSettings.map_watch_puzzle_id
 	var chapter_bg: String = chapter_data.get("default_background", "forest")
 
-	# Collect all puzzle steps
-	var puzzles: Array[Dictionary] = []
-	for step in steps:
-		if step is Dictionary and step.get("type") == "puzzle":
-			puzzles.append(step)
-
-	if puzzles.is_empty():
-		var err_msg := "No puzzle steps found in chapter: %s" % file_path
+	if steps.is_empty():
+		var err_msg := "No steps found in chapter: %s" % source_path
 		push_warning("[MapWatcher] %s" % err_msg)
-		map_error.emit(file_path, err_msg)
-		return {}
+		map_error.emit(source_path, err_msg)
+		return
 
-	# Find by ID or default to first puzzle
-	var found: Dictionary = {}
-	if not target_id.is_empty():
-		for p in puzzles:
-			if p.get("id", "") == target_id:
-				found = p
-				break
-		if found.is_empty():
-			# Try numeric index (e.g., --puzzle=3 for the 3rd puzzle)
-			if target_id.is_valid_int():
-				var idx: int = target_id.to_int() - 1  # 1-based
-				if idx >= 0 and idx < puzzles.size():
-					found = puzzles[idx]
-			if found.is_empty():
-				var ids: Array[String] = []
-				for p in puzzles:
-					ids.append(p.get("id", "?"))
-				var err_msg := "Puzzle '%s' not found in %s. Available: %s" % [target_id, file_path, ", ".join(ids)]
-				push_warning("[MapWatcher] %s" % err_msg)
-				map_error.emit(file_path, err_msg)
-				return {}
+	if not _chapter_loaded:
+		_chapter_loaded = true
+		# Disconnect standalone-puzzle auto-loader — we use story mode instead
+		if map_changed.is_connected(_on_auto_load):
+			map_changed.disconnect(_on_auto_load)
+
+		# Set up SceneManager story state
+		SceneManager.story_active = true
+		SceneManager.story_steps = steps
+		SceneManager.story_default_background = chapter_bg
+		SceneManager.story_chapter = 0  # Not a real chapter number
+
+		# Find and navigate to the target step
+		var target_index := _find_target_step_index(steps)
+		SceneManager.story_step_index = target_index
+		print("[MapWatcher] Starting chapter in story mode at step %d/%d" % [
+			target_index + 1, steps.size()])
+		SceneManager.load_current_step()
 	else:
-		found = puzzles[0]
-		if puzzles.size() > 1:
-			var ids: Array[String] = []
-			for p in puzzles:
-				ids.append(p.get("id", "?"))
-			print("[MapWatcher] Chapter has %d puzzles: %s (loading first: %s)" % [
-				puzzles.size(), ", ".join(ids), found.get("id", "?")])
+		# Hot-reload: update the story steps array
+		SceneManager.story_steps = steps
+		SceneManager.story_default_background = chapter_bg
 
-	# Apply chapter background if puzzle doesn't specify its own
-	var result := found.duplicate(true)
-	if not result.has("background"):
-		result["background"] = chapter_bg
+		var idx := SceneManager.story_step_index
+		if idx >= 0 and idx < steps.size():
+			var current_step: Dictionary = steps[idx]
+			if current_step.get("type") == "puzzle":
+				# Refresh the currently-displayed puzzle
+				var puzzle := current_step.duplicate(true)
+				if not puzzle.has("background"):
+					puzzle["background"] = chapter_bg
+				GameSettings.story_puzzle_data = puzzle
+				GameSettings.story_background = puzzle.get("background", chapter_bg)
+				print("[MapWatcher] Hot-reload step %d: %s" % [idx, puzzle.get("title", "?")])
+				map_changed.emit(puzzle)
 
-	print("[MapWatcher] Extracted puzzle '%s' from chapter" % result.get("id", "?"))
-	return result
+## Find the step index for the target puzzle ID or number.
+## Returns 0 if no target is set or the target is not found.
+func _find_target_step_index(steps: Array) -> int:
+	var target_id: String = GameSettings.map_watch_puzzle_id
+	if target_id.is_empty():
+		return 0
+
+	var puzzle_count := 0
+	for i in range(steps.size()):
+		if steps[i] is Dictionary and steps[i].get("type") == "puzzle":
+			puzzle_count += 1
+			if steps[i].get("id", "") == target_id:
+				return i
+			if target_id.is_valid_int() and puzzle_count == target_id.to_int():
+				return i
+
+	push_warning("[MapWatcher] Target puzzle '%s' not found, starting from step 0" % target_id)
+	return 0
 
 # ─── Autostart ───────────────────────────────────────────────────
 

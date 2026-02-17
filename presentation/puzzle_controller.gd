@@ -37,6 +37,8 @@ var failed_attempts: int = 0
 @onready var retry_btn: Button = $BottomBar/RetryButton
 @onready var undo_btn: Button = $BottomBar/UndoButton
 @onready var skip_btn: Button = $BottomBar/SkipButton
+@onready var prev_btn: Button = $BottomBar/PrevButton
+@onready var next_btn: Button = $BottomBar/NextButton
 @onready var menu_btn: Button = $TopBar/MenuButton
 @onready var hint_label: Label = $HintLabel
 @onready var background: Control = %Background
@@ -68,6 +70,8 @@ func _ready() -> void:
 	undo_btn.pressed.connect(_on_undo)
 	skip_btn.pressed.connect(_on_skip)
 	menu_btn.pressed.connect(_on_menu)
+	prev_btn.pressed.connect(_on_prev)
+	next_btn.pressed.connect(_on_next)
 
 	_start_puzzle()
 
@@ -94,6 +98,7 @@ func _load_puzzle_data() -> void:
 
 	# Setup UI
 	title_label.text = puzzle_title
+	_update_nav()
 	objective_label.text = PuzzleValidator.format_objective(win_condition, "")
 	skip_btn.visible = false
 
@@ -279,6 +284,10 @@ func _on_puzzle_solved() -> void:
 	StoryProgress.mark_completed(puzzle_id)
 	board_view.trigger_win_effect(player_side)
 
+	if MapWatcher.is_watching():
+		next_btn.disabled = false
+		return  # In watch mode, user navigates manually with Next ▸
+
 	# Auto-advance after a brief delay
 	await get_tree().create_timer(1.5).timeout
 	SceneManager.advance_story()
@@ -332,3 +341,41 @@ func _update_ui() -> void:
 
 	if hint_label and puzzle_data.has("hint"):
 		hint_label.visible = failed_attempts >= 2
+
+# ─── Watch Mode Navigation ──────────────────────────────────────────
+
+func _on_prev() -> void:
+	var indices := SceneManager.get_puzzle_step_indices()
+	var current := SceneManager.story_step_index
+	# Find the previous puzzle step
+	for i in range(indices.size() - 1, -1, -1):
+		if indices[i] < current:
+			SceneManager.go_to_step(indices[i])
+			return
+
+func _on_next() -> void:
+	SceneManager.advance_story()
+
+func _update_nav() -> void:
+	var watching := MapWatcher.is_watching() and SceneManager.story_active
+	prev_btn.visible = watching
+	next_btn.visible = watching
+	if not watching:
+		return
+
+	var indices := SceneManager.get_puzzle_step_indices()
+	var current := SceneManager.story_step_index
+
+	# Find which puzzle number this is (1-based)
+	var puzzle_num := 0
+	for i in range(indices.size()):
+		if indices[i] == current:
+			puzzle_num = i + 1
+			break
+
+	if puzzle_num > 0 and indices.size() > 1:
+		title_label.text = "%s  [%d/%d]" % [puzzle_title, puzzle_num, indices.size()]
+
+	# Disable at boundaries
+	prev_btn.disabled = indices.is_empty() or current <= indices[0]
+	next_btn.disabled = indices.is_empty() or current >= indices[-1]
