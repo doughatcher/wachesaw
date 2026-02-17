@@ -17,6 +17,7 @@ GameSettings="*res://core/game_settings.gd"
 StoryProgress="*res://core/story_progress.gd"
 SceneManager="*res://core/scene_manager.gd"
 BuildInfo="*res://core/build_info.gd"
+MapWatcher="*res://core/map_watcher.gd"
 
 [display]
 

@@ -1,0 +1,16 @@
+{
+  "id": "example_puzzle",
+  "title": "Example Puzzle",
+  "description": "Edit this file and the game will hot-reload!",
+  "player": "white",
+  "hint": "Move your Hunter up to capture the enemy Chief.",
+  "board": [
+    [null, null, null, null, null],
+    [null, null, null, null, null],
+    [null, null, {"type": "CHIEF", "player": "black"}, null, null],
+    [null, null, {"type": "HUNTER", "player": "white"}, null, null],
+    [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+  ],
+  "win_condition": { "type": "capture_chief", "max_moves": 1 },
+  "opponent_moves": []
+}

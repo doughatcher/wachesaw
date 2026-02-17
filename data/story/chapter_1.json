@@ -239,7 +239,7 @@
       "type": "puzzle",
       "id": "ch1_p10",
       "title": "The Elder's Test",
-      "description": "Capture the enemy Chief in two moves.",
+      "description": "Capture the enemy Chief in three moves.",
       "player": "white",
       "hint": "Move the Hunter onto the same row as the Chief. When the Chief flees along the row, follow with the capture.",
       "board": [
@@ -249,7 +249,7 @@
         [null, null, null, null, null],
         [{"type": "CHIEF", "player": "white"}, {"type": "HUNTER", "player": "white"}, null, null, null]
       ],
-      "win_condition": { "type": "capture_chief", "max_moves": 2 },
+      "win_condition": { "type": "capture_chief", "max_moves": 5 },
       "opponent_moves": ["Kd4"]
     },
     {

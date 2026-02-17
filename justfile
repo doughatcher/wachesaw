@@ -45,6 +45,39 @@ editor:
 run:
     godot --path . scenes/main.tscn
 
+# Watch a map file for changes and hot-reload the puzzle on save.
+# Builds web debug export, serves with live data, opens browser.
+# Usage: just watch-map maps/custom/example_puzzle.json
+watch-map path="maps/custom/example_puzzle.json" port="8000":
+    just build-web-debug
+    python3 tools/dev_server.py {{port}} --watch={{path}}
+
+# Watch a story chapter file and hot-reload a specific puzzle on save.
+# Builds web debug export, serves with live data, opens browser.
+# Usage: just watch-story 1              (chapter 1, first puzzle)
+#        just watch-story 1 ch1_p03      (chapter 1, puzzle ch1_p03)
+#        just watch-story 2 3            (chapter 2, 3rd puzzle)
+watch-story chapter="1" puzzle="" port="8000":
+    just build-web-debug
+    @if [ -n "{{puzzle}}" ]; then \
+        python3 tools/dev_server.py {{port}} --watch=story/chapter_{{chapter}}.json --puzzle={{puzzle}}; \
+    else \
+        python3 tools/dev_server.py {{port}} --watch=story/chapter_{{chapter}}.json; \
+    fi
+
+# Start the dev server only (skip rebuild).
+# Useful when you've already built and just want to restart the server.
+# Usage: just serve-dev                  (port 8000)
+#        just serve-dev 9000             (custom port)
+serve-dev port="8000" watch="" puzzle="":
+    @if [ -n "{{watch}}" ] && [ -n "{{puzzle}}" ]; then \
+        python3 tools/dev_server.py {{port}} --watch={{watch}} --puzzle={{puzzle}}; \
+    elif [ -n "{{watch}}" ]; then \
+        python3 tools/dev_server.py {{port}} --watch={{watch}}; \
+    else \
+        python3 tools/dev_server.py {{port}}; \
+    fi
+
 # Run headless (for testing core logic)
 run-headless:
     godot --headless --script tests/run_tests.gd

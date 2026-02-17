@@ -55,6 +55,28 @@ func _ready() -> void:
 		if background.has_method("get_board_palette"):
 			board_view.set_board_palette(background.get_board_palette())
 
+	# Connect map watcher for hot-reload
+	if MapWatcher.is_watching():
+		MapWatcher.map_changed.connect(_on_map_file_changed)
+
+	_load_puzzle_data()
+
+	# Connect signals
+	board_view.cell_clicked.connect(_on_cell_clicked)
+	board_view.animation_finished.connect(_on_animation_finished)
+	retry_btn.pressed.connect(_on_retry)
+	undo_btn.pressed.connect(_on_undo)
+	skip_btn.pressed.connect(_on_skip)
+	menu_btn.pressed.connect(_on_menu)
+
+	_start_puzzle()
+
+func _exit_tree() -> void:
+	# Disconnect watcher to avoid calling into a freed node
+	if MapWatcher.map_changed.is_connected(_on_map_file_changed):
+		MapWatcher.map_changed.disconnect(_on_map_file_changed)
+
+func _load_puzzle_data() -> void:
 	puzzle_id = puzzle_data.get("id", "unknown")
 	puzzle_title = puzzle_data.get("title", "Puzzle")
 	puzzle_description = puzzle_data.get("description", "")
@@ -70,24 +92,22 @@ func _ready() -> void:
 	board = StoryData.build_board(board_array)
 	initial_board = board.clone()
 
-	# Connect signals
-	board_view.cell_clicked.connect(_on_cell_clicked)
-	board_view.animation_finished.connect(_on_animation_finished)
-	retry_btn.pressed.connect(_on_retry)
-	undo_btn.pressed.connect(_on_undo)
-	skip_btn.pressed.connect(_on_skip)
-	menu_btn.pressed.connect(_on_menu)
-
 	# Setup UI
 	title_label.text = puzzle_title
 	objective_label.text = PuzzleValidator.format_objective(win_condition, "")
-	skip_btn.visible = false  # Show after 3+ failures
+	skip_btn.visible = false
 
 	if hint_label:
 		var hint: String = puzzle_data.get("hint", "")
 		hint_label.text = hint
 		hint_label.visible = false
 
+## Called by MapWatcher when the map file changes on disk — hot-reloads the puzzle.
+func _on_map_file_changed(new_puzzle_data: Dictionary) -> void:
+	print("[PuzzleController] Hot-reloading map: %s" % new_puzzle_data.get("title", ""))
+	puzzle_data = new_puzzle_data
+	GameSettings.story_puzzle_data = new_puzzle_data
+	_load_puzzle_data()
 	_start_puzzle()
 
 func _start_puzzle() -> void:
