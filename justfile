@@ -78,6 +78,21 @@ serve-dev port="8000" watch="" puzzle="":
         python3 tools/dev_server.py {{port}}; \
     fi
 
+# Open the GTK4 level editor (visual story/puzzle editor).
+# Usage: just level-editor                          (opens file chooser)
+#        just level-editor data/story/chapter_1.json
+level-editor path="":
+    @if [ -n "{{path}}" ]; then \
+        python3 tools/level_editor.py {{path}}; \
+    else \
+        python3 tools/level_editor.py; \
+    fi
+
+# Edit a story chapter in the GTK4 level editor.
+# Usage: just edit-chapter 1
+edit-chapter chapter="1":
+    python3 tools/level_editor.py data/story/chapter_{{chapter}}.json
+
 # Run headless (for testing core logic)
 run-headless:
     godot --headless --script tests/run_tests.gd

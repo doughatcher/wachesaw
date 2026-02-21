@@ -19,3 +19,11 @@ RUN apt-get update \
     && rm -rf /tmp/templates /tmp/templates.tpz \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Install GTK4 Python bindings for the level editor
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        python3-gi \
+        gir1.2-gtk-4.0 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
