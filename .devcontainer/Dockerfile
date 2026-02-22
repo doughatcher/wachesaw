@@ -28,3 +28,10 @@ RUN apt-get update \
         x11-apps \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js 22 LTS, Wrangler CLI, and Expo CLI
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && npm install -g wrangler@latest @expo/cli@latest \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*

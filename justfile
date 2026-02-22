@@ -273,6 +273,76 @@ mac-edit-chapter chapter="1":
 run-headless:
     godot --headless --script tests/run_tests.gd
 
+# ─── Multi-Repo (API + Express) ─────────────────────────────────
+
+# Clone or update the API and Express repos into apps/
+clone-apps:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    mkdir -p apps
+    if [ -d apps/wachesaw-api ]; then
+        echo "Pulling wachesaw-api…"
+        cd apps/wachesaw-api && git pull && cd ../..
+    else
+        echo "Cloning wachesaw-api…"
+        gh repo clone doughatcher/wachesaw-api apps/wachesaw-api
+    fi
+    if [ -d apps/wachesaw-express ]; then
+        echo "Pulling wachesaw-express…"
+        cd apps/wachesaw-express && git pull && cd ../..
+    else
+        echo "Cloning wachesaw-express…"
+        gh repo clone doughatcher/wachesaw-express apps/wachesaw-express
+    fi
+    cd apps/wachesaw-api && npm install
+    cd ../wachesaw-express && npm install
+    echo "✓ All app repos ready"
+
+# Start the Cloudflare Workers API locally (port 8787)
+api-dev:
+    cd apps/wachesaw-api && npx wrangler dev
+
+# Deploy the API to Cloudflare Workers (production)
+api-deploy:
+    cd apps/wachesaw-api && npx wrangler deploy
+
+# Deploy the API to staging
+api-deploy-staging:
+    cd apps/wachesaw-api && npx wrangler deploy --env staging
+
+# Apply D1 database migrations
+api-migrate env="production":
+    cd apps/wachesaw-api && npx wrangler d1 migrations apply WACHESAW_DB --env {{env}}
+
+# Manual D1 backup to R2
+api-backup:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cd apps/wachesaw-api
+    TIMESTAMP=$(date +%Y-%m-%d_%H%M%S)
+    npx wrangler d1 export WACHESAW_DB --output="/tmp/wachesaw-db-${TIMESTAMP}.sql"
+    gzip "/tmp/wachesaw-db-${TIMESTAMP}.sql"
+    npx wrangler r2 object put "wachesaw-backups/daily/wachesaw-db-${TIMESTAMP}.sql.gz" \
+        --file="/tmp/wachesaw-db-${TIMESTAMP}.sql.gz"
+    rm "/tmp/wachesaw-db-${TIMESTAMP}.sql.gz"
+    echo "✓ Backup uploaded: daily/wachesaw-db-${TIMESTAMP}.sql.gz"
+
+# Start the Expo web dev server (port 8081)
+express-dev:
+    cd apps/wachesaw-express && npx expo start --web --port 8081
+
+# Build the Expo PWA static export
+express-build:
+    cd apps/wachesaw-express && npx expo export --platform web
+
+# Interactive Cloudflare login
+setup-cloudflare:
+    npx wrangler login
+
+# Interactive GitHub CLI login
+setup-gh:
+    gh auth login
+
 # ─── Builds ──────────────────────────────────────────────────────
 
 # Build for web (works on Linux — test on any device via browser)

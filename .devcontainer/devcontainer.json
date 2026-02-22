@@ -1,5 +1,5 @@
 {
-  "name": "Wachesaw (Godot 4.4)",
+  "name": "Wachesaw (Full Stack)",
   "build": {
     "dockerfile": "Dockerfile",
     "args": {
@@ -11,18 +11,21 @@
     "ghcr.io/devcontainers/features/python:1": {
       "installTools": true,
       "version": "3.12"
-    }// ,
-    // "ghcr.io/devcontainers/features/github-cli:1": {
-    //   "installDirectlyFromGitHubRelease": true,
-    //   "version": "latest"
-    // }
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "installDirectlyFromGitHubRelease": true,
+      "version": "latest"
+    }
   },
   "customizations": {
     "vscode": {
       "extensions": [
         "geequlim.godot-tools",
         "alfish.godot-files",
-        "skeletal-waring.just"
+        "skeletal-waring.just",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss"
       ],
       "settings": {
         "editor.tabSize": 4,
@@ -40,8 +43,8 @@
     "-v", "/tmp/.X11-unix:/tmp/.X11-unix:rw",
     "-e", "DISPLAY"
   ],
-  "forwardPorts": [8000, 8001, 6007],
-  "postCreateCommand": "godot --headless --import 2>/dev/null || true",
-  "postAttachCommand": "just serve",
+  "forwardPorts": [8000, 8001, 6007, 8081, 8787],
+  "postCreateCommand": "bash -c 'godot --headless --import 2>/dev/null || true; mkdir -p apps; if command -v gh &>/dev/null && gh auth status &>/dev/null; then [ -d apps/wachesaw-api ] || gh repo clone doughatcher/wachesaw-api apps/wachesaw-api 2>/dev/null || true; [ -d apps/wachesaw-express ] || gh repo clone doughatcher/wachesaw-express apps/wachesaw-express 2>/dev/null || true; fi; cd apps/wachesaw-api 2>/dev/null && npm install 2>/dev/null || true; cd ../wachesaw-express 2>/dev/null && npm install 2>/dev/null || true'",
+  "postAttachCommand": "echo '✓ Wachesaw full-stack environment ready. Run: just --list'",
   "remoteUser": "root"
 }

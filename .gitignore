@@ -5,6 +5,9 @@
 # Builds
 builds/
 
+# Sub-repos (cloned by devcontainer, not committed)
+apps/
+
 # OS
 .DS_Store
 Thumbs.db

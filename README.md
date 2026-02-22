@@ -170,6 +170,37 @@ All commands use [just](https://github.com/casey/just) (`brew install just` or i
 | `just clean-all` | Remove builds + Godot import cache |
 | `just release` | Tag a release and push to GitHub |
 
+### Multi-Repo (API + Express)
+
+These commands operate on the companion repos cloned into `apps/`. See [multi-repo-arch.md](multi-repo-arch.md) for the full architecture.
+
+| Command | Description |
+|---------|-------------|
+| `just clone-apps` | Clone or update `wachesaw-api` and `wachesaw-express` into `apps/` |
+| `just api-dev` | Start Cloudflare Workers API locally (port 8787) |
+| `just api-deploy` | Deploy API to production |
+| `just api-deploy-staging` | Deploy API to staging |
+| `just api-migrate` | Apply D1 database migrations |
+| `just api-backup` | Manual D1 backup to R2 |
+| `just express-dev` | Start Expo web dev server (port 8081) |
+| `just express-build` | Build Expo PWA static export |
+| `just setup-cloudflare` | Interactive Cloudflare login (`wrangler login`) |
+| `just setup-gh` | Interactive GitHub CLI login |
+
+---
+
+## Project Architecture
+
+Wachesaw is a three-repo system:
+
+| Repo | Role | URL |
+|------|------|-----|
+| **[wachesaw](https://github.com/doughatcher/wachesaw)** (this repo) | Godot game engine — story mode, AI, desktop/console/web builds | `play.wachesaw.app` |
+| **[wachesaw-api](https://github.com/doughatcher/wachesaw-api)** | Cloudflare Workers API — auth, progress sync, community puzzles, leaderboards | `api.wachesaw.app` |
+| **[wachesaw-express](https://github.com/doughatcher/wachesaw-express)** | Expo PWA — level editor, daily puzzles, community browser | `wachesaw.app` |
+
+This repo's devcontainer is the **hub** — it includes Godot, Node.js, Wrangler, Expo CLI, and gh CLI. Run `just clone-apps` to pull the other repos into `apps/`. See [multi-repo-arch.md](multi-repo-arch.md) for the full architecture, data contracts, auth flow, and CI/CD plan.
+
 ---
 
 ## Build Specification
