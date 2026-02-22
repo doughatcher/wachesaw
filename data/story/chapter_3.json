@@ -6,25 +6,75 @@
     {
       "type": "dialog",
       "lines": [
-        { "speaker": null, "portrait": null, "text": "Nume ventures deeper into enemy territory. The trees grow twisted, and the air carries an unnatural chill." },
-        { "speaker": "Nume", "portrait": "nume_neutral", "text": "Stay sharp. They know we're here." }
+        {
+          "speaker": null,
+          "portrait": null,
+          "text": "Nume ventures deeper into enemy territory. The trees grow twisted, and the air carries an unnatural chill."
+        },
+        {
+          "speaker": "Nume",
+          "portrait": "nume_neutral",
+          "text": "Stay sharp. They know we're here."
+        }
       ]
     },
     {
       "type": "puzzle",
       "id": "ch3_p01",
       "title": "Ambush",
-      "description": "Spring your trap — capture the Chief.",
+      "description": "Spring your trap \u2014 capture the Chief.",
       "player": "white",
       "hint": "The Keeper can capture diagonally.",
       "board": [
-        [null, null, null, null, null],
-        [null, {"type": "CHIEF", "player": "black"}, null, null, null],
-        [{"type": "KEEPER", "player": "white"}, null, null, null, null],
-        [null, null, null, null, null],
-        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          },
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "KEEPER",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          null
+        ]
       ],
-      "win_condition": { "type": "capture_chief", "max_moves": 1 },
+      "win_condition": {
+        "type": "capture_chief",
+        "max_moves": 1
+      },
       "opponent_moves": []
     },
     {
@@ -35,13 +85,55 @@
       "player": "white",
       "hint": "Hunter moves straight up.",
       "board": [
-        [null, null, null, null, null],
-        [null, null, null, {"type": "HUNTER", "player": "white"}, null],
-        [null, null, null, null, null],
-        [null, null, null, null, null],
-        [{"type": "CHIEF", "player": "white"}, null, null, null, {"type": "CHIEF", "player": "black"}]
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          {
+            "type": "HUNTER",
+            "player": "white"
+          },
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          }
+        ]
       ],
-      "win_condition": { "type": "cross_piece", "max_moves": 1 },
+      "win_condition": {
+        "type": "cross_piece",
+        "max_moves": 1
+      },
       "opponent_moves": []
     },
     {
@@ -52,20 +144,72 @@
       "player": "white",
       "hint": "Drive the Chief into the corner, then capture.",
       "board": [
-        [null, null, null, {"type": "CHIEF", "player": "black"}, null],
-        [null, null, null, null, null],
-        [null, {"type": "KEEPER", "player": "white"}, null, null, null],
-        [null, null, null, null, null],
-        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+        [
+          null,
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          },
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          {
+            "type": "KEEPER",
+            "player": "white"
+          },
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          null
+        ]
       ],
-      "win_condition": { "type": "capture_chief", "max_moves": 2 },
-      "opponent_moves": ["Ke5"]
+      "win_condition": {
+        "type": "capture_chief",
+        "max_moves": 2
+      },
+      "opponent_moves": [
+        "Ke5"
+      ]
     },
     {
       "type": "dialog",
       "lines": [
-        { "speaker": "Dark Force", "portrait": "dark_force", "text": "You are far from home, little Chief." },
-        { "speaker": "Nume", "portrait": "nume_neutral", "text": "I go where my people need me." }
+        {
+          "speaker": "Dark Force",
+          "portrait": "dark_force",
+          "text": "You are far from home, little Chief."
+        },
+        {
+          "speaker": "Nume",
+          "portrait": "nume_neutral",
+          "text": "I go where my people need me."
+        }
       ]
     },
     {
@@ -76,13 +220,55 @@
       "player": "white",
       "hint": "L-jump to capture.",
       "board": [
-        [null, {"type": "CHIEF", "player": "black"}, null, null, null],
-        [null, null, null, null, null],
-        [{"type": "TRADER", "player": "white"}, null, null, null, null],
-        [null, null, null, null, null],
-        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+        [
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          },
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "TRADER",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          null
+        ]
       ],
-      "win_condition": { "type": "capture_chief", "max_moves": 1 },
+      "win_condition": {
+        "type": "capture_chief",
+        "max_moves": 1
+      },
       "opponent_moves": []
     },
     {
@@ -93,13 +279,55 @@
       "player": "white",
       "hint": "Diagonal move to the back row.",
       "board": [
-        [null, null, null, null, null],
-        [null, null, null, null, {"type": "RIVER_RUNNER", "player": "white"}],
-        [null, null, null, null, null],
-        [null, null, null, null, null],
-        [{"type": "CHIEF", "player": "white"}, null, null, null, {"type": "CHIEF", "player": "black"}]
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          {
+            "type": "RIVER_RUNNER",
+            "player": "white"
+          }
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          }
+        ]
       ],
-      "win_condition": { "type": "cross_piece", "max_moves": 1 },
+      "win_condition": {
+        "type": "cross_piece",
+        "max_moves": 1
+      },
       "opponent_moves": []
     },
     {
@@ -110,19 +338,65 @@
       "player": "white",
       "hint": "Swap the Hunter and Chief, then the Hunter captures.",
       "board": [
-        [null, null, {"type": "CHIEF", "player": "black"}, null, null],
-        [null, null, {"type": "CHIEF", "player": "white"}, null, null],
-        [null, null, {"type": "HUNTER", "player": "white"}, null, null],
-        [null, null, null, null, null],
-        [null, null, null, null, null]
+        [
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          },
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          {
+            "type": "HUNTER",
+            "player": "white"
+          },
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
       ],
-      "win_condition": { "type": "capture_chief", "max_moves": 2 },
+      "win_condition": {
+        "type": "capture_chief",
+        "max_moves": 2
+      },
       "opponent_moves": []
     },
     {
       "type": "dialog",
       "lines": [
-        { "speaker": null, "portrait": null, "text": "The deeper Nume goes, the stronger the resistance becomes." }
+        {
+          "speaker": null,
+          "portrait": null,
+          "text": "The deeper Nume goes, the stronger the resistance becomes."
+        }
       ]
     },
     {
@@ -133,13 +407,55 @@
       "player": "white",
       "hint": "The Keeper can cross to the back row diagonally.",
       "board": [
-        [null, null, null, null, null],
-        [null, null, null, {"type": "KEEPER", "player": "white"}, null],
-        [null, null, null, null, null],
-        [null, null, null, null, null],
-        [{"type": "CHIEF", "player": "white"}, null, null, null, {"type": "CHIEF", "player": "black"}]
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          {
+            "type": "KEEPER",
+            "player": "white"
+          },
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          }
+        ]
       ],
-      "win_condition": { "type": "cross_piece", "max_moves": 1 },
+      "win_condition": {
+        "type": "cross_piece",
+        "max_moves": 1
+      },
       "opponent_moves": []
     },
     {
@@ -150,14 +466,58 @@
       "player": "white",
       "hint": "Move your Hunter to block escape, forcing the Chief to the corner.",
       "board": [
-        [null, {"type": "CHIEF", "player": "black"}, null, null, null],
-        [null, null, null, null, null],
-        [null, null, {"type": "HUNTER", "player": "white"}, null, null],
-        [null, null, null, null, null],
-        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+        [
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          },
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          {
+            "type": "HUNTER",
+            "player": "white"
+          },
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          null
+        ]
       ],
-      "win_condition": { "type": "capture_chief", "max_moves": 2 },
-      "opponent_moves": ["Ka5"]
+      "win_condition": {
+        "type": "capture_chief",
+        "max_moves": 2
+      },
+      "opponent_moves": [
+        "Ka5"
+      ]
     },
     {
       "type": "puzzle",
@@ -167,13 +527,55 @@
       "player": "white",
       "hint": "The Keeper can either capture the Chief or reach the back row.",
       "board": [
-        [null, null, null, {"type": "CHIEF", "player": "black"}, null],
-        [null, null, {"type": "KEEPER", "player": "white"}, null, null],
-        [null, null, null, null, null],
-        [null, null, null, null, null],
-        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+        [
+          null,
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          },
+          null
+        ],
+        [
+          null,
+          null,
+          {
+            "type": "KEEPER",
+            "player": "white"
+          },
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          null
+        ]
       ],
-      "win_condition": { "type": "capture_chief", "max_moves": 1 },
+      "win_condition": {
+        "type": "capture_chief",
+        "max_moves": 1
+      },
       "opponent_moves": []
     },
     {
@@ -184,21 +586,81 @@
       "player": "white",
       "hint": "The Trader can leap to capture the Chief behind the defenders.",
       "board": [
-        [null, null, {"type": "CHIEF", "player": "black"}, null, null],
-        [null, {"type": "KEEPER", "player": "black"}, {"type": "HUNTER", "player": "black"}, null, null],
-        [null, null, null, {"type": "TRADER", "player": "white"}, null],
-        [null, null, null, null, null],
-        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+        [
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          },
+          null,
+          null
+        ],
+        [
+          null,
+          {
+            "type": "KEEPER",
+            "player": "black"
+          },
+          {
+            "type": "HUNTER",
+            "player": "black"
+          },
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          {
+            "type": "TRADER",
+            "player": "white"
+          },
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          null
+        ]
       ],
-      "win_condition": { "type": "capture_chief", "max_moves": 1 },
+      "win_condition": {
+        "type": "capture_chief",
+        "max_moves": 1
+      },
       "opponent_moves": []
     },
     {
       "type": "dialog",
       "lines": [
-        { "speaker": "Dark Force", "portrait": "dark_force", "text": "Impressive. But you have merely scratched the surface of my power." },
-        { "speaker": "Nume", "portrait": "nume_neutral", "text": "I will find its source. And I will end it." },
-        { "speaker": null, "portrait": null, "text": "Chapter 3 complete. The true darkness awaits..." }
+        {
+          "speaker": "Dark Force",
+          "portrait": "dark_force",
+          "text": "Impressive. But you have merely scratched the surface of my power."
+        },
+        {
+          "speaker": "Nume",
+          "portrait": "nume_neutral",
+          "text": "I will find its source. And I will end it."
+        },
+        {
+          "speaker": null,
+          "portrait": null,
+          "text": "Chapter 3 complete. The true darkness awaits..."
+        }
       ]
     }
   ]

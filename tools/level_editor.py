@@ -749,6 +749,7 @@ class LevelEditorWindow(Gtk.ApplicationWindow):
             self._play_btn.set_label("▶ Saved")
             # Reset label after a moment
             GLib.timeout_add(800, self._reset_play_label_native)
+            self._focus_godot()
             return
 
         # Derive the watch path relative to data/ (e.g. "story/chapter_1.json")
@@ -819,8 +820,28 @@ class LevelEditorWindow(Gtk.ApplicationWindow):
             + "\nClick to save & hot-reload"
         )
 
+        # Give Godot a moment to create its window, then focus it
+        GLib.timeout_add(800, self._focus_godot)
+
         # Poll for Godot exit so we can reset the button
         GLib.timeout_add(1000, self._poll_godot_proc)
+
+    @staticmethod
+    def _focus_godot() -> bool:
+        """Bring the Godot window to the front (macOS). Returns False for GLib.timeout_add."""
+        if sys.platform == "darwin":
+            try:
+                subprocess.Popen(
+                    ["osascript", "-e",
+                     'tell application "System Events" to set frontmost of '
+                     'first process whose unix id is '
+                     '(do shell script "pgrep -x Godot") to true'],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
+            except Exception:
+                pass
+        return False  # don't repeat
 
     def _poll_godot_proc(self) -> bool:
         """Check if the Godot process is still running (GLib timeout callback)."""
