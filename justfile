@@ -79,13 +79,17 @@ serve-dev port="8000" watch="" puzzle="":
     fi
 
 # Open the GTK4 level editor (visual story/puzzle editor).
+# Requires a display — uses X11 forwarding in the dev container.
+# macOS host:  brew install xquartz && enable "Allow connections from network clients"
+# Native macOS:  brew install gtk4 pygobject3 && python3 tools/level_editor.py
+# Native Linux:  sudo apt-get install python3-gi gir1.2-gtk-4.0
 # Usage: just level-editor                          (opens file chooser)
 #        just level-editor data/story/chapter_1.json
 level-editor path="":
     @if [ -n "{{path}}" ]; then \
-        python3 tools/level_editor.py {{path}}; \
+        /usr/bin/python3 tools/level_editor.py {{path}}; \
     else \
-        python3 tools/level_editor.py; \
+        /usr/bin/python3 tools/level_editor.py; \
     fi
 
 # Edit a story chapter in the GTK4 level editor.

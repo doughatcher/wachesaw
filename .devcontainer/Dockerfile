@@ -20,10 +20,11 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install GTK4 Python bindings for the level editor
+# Install GTK4 Python bindings and X11 support for the level editor
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         python3-gi \
         gir1.2-gtk-4.0 \
+        x11-apps \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*

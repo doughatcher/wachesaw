@@ -6,11 +6,31 @@
     {
       "type": "dialog",
       "lines": [
-        { "speaker": null, "portrait": null, "text": "The Waccamaw lands have known peace for many seasons. But whispers of a dark force gathering in the north have reached the village." },
-        { "speaker": "Elder", "portrait": "elder_neutral", "text": "Nume, you must prepare. The shadows grow stronger each day." },
-        { "speaker": "Nume", "portrait": "nume_neutral", "text": "I will protect our people, Elder. What must I do?" },
-        { "speaker": "Elder", "portrait": "elder_neutral", "text": "First, you must master the art of the decisive strike. A Chief must see the board as it truly is." },
-        { "speaker": null, "portrait": null, "text": "And so Nume's training begins..." }
+        {
+          "speaker": null,
+          "portrait": null,
+          "text": "The Waccamaw lands have known peace for many seasons. But whispers of a dark force gathering in the north have reached the village."
+        },
+        {
+          "speaker": "Elder",
+          "portrait": "elder_neutral",
+          "text": "Nume, you must prepare. The shadows grow stronger each day."
+        },
+        {
+          "speaker": "Nume",
+          "portrait": "nume_neutral",
+          "text": "I will protect our people, Elder. What must I do?"
+        },
+        {
+          "speaker": "Elder",
+          "portrait": "elder_neutral",
+          "text": "First, you must master the art of the decisive strike. A Chief must see the board as it truly is."
+        },
+        {
+          "speaker": null,
+          "portrait": null,
+          "text": "And so Nume's training begins..."
+        }
       ]
     },
     {
@@ -19,23 +39,77 @@
       "title": "The First Lesson",
       "description": "Learn to spot a direct capture.",
       "player": "white",
-      "hint": "Your Hunter can move orthogonally — look for the enemy Chief.",
+      "hint": "Your Hunter can move orthogonally \u2014 look for the enemy Chief.",
       "board": [
-        [null, null, null, null, null],
-        [null, null, null, null, null],
-        [null, null, {"type": "CHIEF", "player": "black"}, null, null],
-        [null, null, {"type": "HUNTER", "player": "white"}, null, null],
-        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          },
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          {
+            "type": "HUNTER",
+            "player": "white"
+          },
+          null,
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          null
+        ]
       ],
-      "win_condition": { "type": "capture_chief", "max_moves": 1 },
+      "win_condition": {
+        "type": "capture_chief",
+        "max_moves": 1
+      },
       "opponent_moves": []
     },
     {
       "type": "dialog",
       "lines": [
-        { "speaker": "Elder", "portrait": "elder_neutral", "text": "Good. You see the path clearly. But not every battle is so simple." },
-        { "speaker": "Nume", "portrait": "nume_neutral", "text": "What comes next?" },
-        { "speaker": "Elder", "portrait": "elder_neutral", "text": "The Keeper is your strongest ally. She can move in any direction, just as the Chief can." }
+        {
+          "speaker": "Elder",
+          "portrait": "elder_neutral",
+          "text": "Good. You see the path clearly. But not every battle is so simple."
+        },
+        {
+          "speaker": "Nume",
+          "portrait": "nume_neutral",
+          "text": "What comes next?"
+        },
+        {
+          "speaker": "Elder",
+          "portrait": "elder_neutral",
+          "text": "The Keeper is your strongest ally. She can move in any direction, just as the Chief can."
+        }
       ]
     },
     {
@@ -44,22 +118,72 @@
       "title": "The Keeper's Reach",
       "description": "Use the Keeper to capture the enemy Chief.",
       "player": "white",
-      "hint": "The Keeper moves one step in any direction — including diagonals.",
+      "hint": "The Keeper moves one step in any direction \u2014 including diagonals.",
       "board": [
-        [null, null, null, null, null],
-        [null, null, null, {"type": "CHIEF", "player": "black"}, null],
-        [null, null, {"type": "KEEPER", "player": "white"}, null, null],
-        [null, null, null, null, null],
-        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          },
+          null
+        ],
+        [
+          null,
+          null,
+          {
+            "type": "KEEPER",
+            "player": "white"
+          },
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          null
+        ]
       ],
-      "win_condition": { "type": "capture_chief", "max_moves": 1 },
+      "win_condition": {
+        "type": "capture_chief",
+        "max_moves": 1
+      },
       "opponent_moves": []
     },
     {
       "type": "dialog",
       "lines": [
-        { "speaker": "Nume", "portrait": "nume_neutral", "text": "The Keeper is powerful indeed." },
-        { "speaker": "Elder", "portrait": "elder_neutral", "text": "Now learn of the River Runner. She moves along the diagonals, swift as the current." }
+        {
+          "speaker": "Nume",
+          "portrait": "nume_neutral",
+          "text": "The Keeper is powerful indeed."
+        },
+        {
+          "speaker": "Elder",
+          "portrait": "elder_neutral",
+          "text": "Now learn of the River Runner. She moves along the diagonals, swift as the current."
+        }
       ]
     },
     {
@@ -70,21 +194,75 @@
       "player": "white",
       "hint": "The River Runner moves diagonally. Reach row 0 (the top) to win.",
       "board": [
-        [null, null, null, null, null],
-        [{"type": "RIVER_RUNNER", "player": "white"}, null, null, null, null],
-        [null, null, null, null, null],
-        [null, null, null, null, null],
-        [{"type": "CHIEF", "player": "white"}, null, null, null, {"type": "CHIEF", "player": "black"}]
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "RIVER_RUNNER",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          }
+        ]
       ],
-      "win_condition": { "type": "cross_piece", "max_moves": 1 },
+      "win_condition": {
+        "type": "cross_piece",
+        "max_moves": 1
+      },
       "opponent_moves": []
     },
     {
       "type": "dialog",
       "lines": [
-        { "speaker": "Elder", "portrait": "elder_neutral", "text": "Crossing the river to their home ground — that is another path to victory." },
-        { "speaker": "Nume", "portrait": "nume_neutral", "text": "Two ways to win. I understand." },
-        { "speaker": "Elder", "portrait": "elder_neutral", "text": "But beware the Trader. The Trader leaps like no other — an L-shaped jump that passes over all in its way." }
+        {
+          "speaker": "Elder",
+          "portrait": "elder_neutral",
+          "text": "Crossing the river to their home ground \u2014 that is another path to victory."
+        },
+        {
+          "speaker": "Nume",
+          "portrait": "nume_neutral",
+          "text": "Two ways to win. I understand."
+        },
+        {
+          "speaker": "Elder",
+          "portrait": "elder_neutral",
+          "text": "But beware the Trader. The Trader leaps like no other \u2014 an L-shaped jump that passes over all in its way."
+        }
       ]
     },
     {
@@ -95,20 +273,70 @@
       "player": "white",
       "hint": "The Trader moves in an L-shape: 2 squares in one direction, then 1 to the side.",
       "board": [
-        [null, null, null, null, null],
-        [null, null, null, null, null],
-        [null, null, {"type": "CHIEF", "player": "black"}, null, null],
-        [null, null, null, null, null],
-        [{"type": "CHIEF", "player": "white"}, {"type": "TRADER", "player": "white"}, null, null, null]
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          },
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          {
+            "type": "TRADER",
+            "player": "white"
+          },
+          null,
+          null,
+          null
+        ]
       ],
-      "win_condition": { "type": "capture_chief", "max_moves": 1 },
+      "win_condition": {
+        "type": "capture_chief",
+        "max_moves": 1
+      },
       "opponent_moves": []
     },
     {
       "type": "dialog",
       "lines": [
-        { "speaker": "Nume", "portrait": "nume_neutral", "text": "The Trader is unpredictable. A valuable warrior." },
-        { "speaker": "Elder", "portrait": "elder_neutral", "text": "Now, a harder test. Sometimes the path to victory requires two moves — and the enemy will respond." }
+        {
+          "speaker": "Nume",
+          "portrait": "nume_neutral",
+          "text": "The Trader is unpredictable. A valuable warrior."
+        },
+        {
+          "speaker": "Elder",
+          "portrait": "elder_neutral",
+          "text": "Now, a harder test. Sometimes the path to victory requires two moves \u2014 and the enemy will respond."
+        }
       ]
     },
     {
@@ -119,21 +347,80 @@
       "player": "white",
       "hint": "Move your Hunter to threaten the Chief. After the Chief flees, your Keeper finishes.",
       "board": [
-        [null, null, null, null, {"type": "CHIEF", "player": "black"}],
-        [null, null, null, null, null],
-        [null, null, null, {"type": "KEEPER", "player": "white"}, null],
-        [null, null, null, null, {"type": "HUNTER", "player": "white"}],
-        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+        [
+          null,
+          null,
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          }
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          {
+            "type": "KEEPER",
+            "player": "white"
+          },
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          {
+            "type": "HUNTER",
+            "player": "white"
+          }
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          null
+        ]
       ],
-      "win_condition": { "type": "capture_chief", "max_moves": 2 },
-      "opponent_moves": ["Kd1"]
+      "win_condition": {
+        "type": "capture_chief",
+        "max_moves": 2
+      },
+      "opponent_moves": [
+        "Kd1"
+      ]
     },
     {
       "type": "dialog",
       "lines": [
-        { "speaker": "Elder", "portrait": "elder_neutral", "text": "You begin to think ahead. This is the way of a true Chief." },
-        { "speaker": null, "portrait": null, "text": "Night falls over the village. Nume rests, but the distant drums of the dark force echo through the trees." },
-        { "speaker": "Nume", "portrait": "nume_neutral", "text": "I can feel them drawing closer." }
+        {
+          "speaker": "Elder",
+          "portrait": "elder_neutral",
+          "text": "You begin to think ahead. This is the way of a true Chief."
+        },
+        {
+          "speaker": null,
+          "portrait": null,
+          "text": "Night falls over the village. Nume rests, but the distant drums of the dark force echo through the trees."
+        },
+        {
+          "speaker": "Nume",
+          "portrait": "nume_neutral",
+          "text": "I can feel them drawing closer."
+        }
       ]
     },
     {
@@ -144,21 +431,77 @@
       "player": "white",
       "hint": "Swap your Chief out of the way, then move the Hunter to the back row.",
       "board": [
-        [null, null, null, null, null],
-        [{"type": "HUNTER", "player": "white"}, {"type": "CHIEF", "player": "white"}, null, null, null],
-        [null, null, null, null, null],
-        [null, null, null, null, null],
-        [null, null, null, null, {"type": "CHIEF", "player": "black"}]
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "HUNTER",
+            "player": "white"
+          },
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          }
+        ]
       ],
-      "win_condition": { "type": "cross_piece", "max_moves": 2 },
-      "opponent_moves": ["Kd1"]
+      "win_condition": {
+        "type": "cross_piece",
+        "max_moves": 2
+      },
+      "opponent_moves": [
+        "Kd1"
+      ]
     },
     {
       "type": "dialog",
       "lines": [
-        { "speaker": "Elder", "portrait": "elder_neutral", "text": "The swap — moving your allies into better positions without losing a turn of attack. Masterful." },
-        { "speaker": "Nume", "portrait": "nume_neutral", "text": "But it costs my turn. The enemy still moves." },
-        { "speaker": "Elder", "portrait": "elder_neutral", "text": "Indeed. Timing is everything." }
+        {
+          "speaker": "Elder",
+          "portrait": "elder_neutral",
+          "text": "The swap \u2014 moving your allies into better positions without losing a turn of attack. Masterful."
+        },
+        {
+          "speaker": "Nume",
+          "portrait": "nume_neutral",
+          "text": "But it costs my turn. The enemy still moves."
+        },
+        {
+          "speaker": "Elder",
+          "portrait": "elder_neutral",
+          "text": "Indeed. Timing is everything."
+        }
       ]
     },
     {
@@ -169,21 +512,75 @@
       "player": "white",
       "hint": "The Chief is in the corner. Only one piece can reach it.",
       "board": [
-        [{"type": "CHIEF", "player": "black"}, null, null, null, null],
-        [null, {"type": "KEEPER", "player": "white"}, null, null, null],
-        [null, null, null, null, null],
-        [null, null, null, null, null],
-        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+        [
+          {
+            "type": "CHIEF",
+            "player": "black"
+          },
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          {
+            "type": "KEEPER",
+            "player": "white"
+          },
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          null
+        ]
       ],
-      "win_condition": { "type": "capture_chief", "max_moves": 1 },
+      "win_condition": {
+        "type": "capture_chief",
+        "max_moves": 1
+      },
       "opponent_moves": []
     },
     {
       "type": "dialog",
       "lines": [
-        { "speaker": null, "portrait": null, "text": "Dawn breaks. Scouts report movement at the northern border." },
-        { "speaker": "Nume", "portrait": "nume_neutral", "text": "How many?" },
-        { "speaker": "Elder", "portrait": "elder_neutral", "text": "Enough. But you are ready. Show me what you've learned." }
+        {
+          "speaker": null,
+          "portrait": null,
+          "text": "Dawn breaks. Scouts report movement at the northern border."
+        },
+        {
+          "speaker": "Nume",
+          "portrait": "nume_neutral",
+          "text": "How many?"
+        },
+        {
+          "speaker": "Elder",
+          "portrait": "elder_neutral",
+          "text": "Enough. But you are ready. Show me what you've learned."
+        }
       ]
     },
     {
@@ -194,20 +591,70 @@
       "player": "white",
       "hint": "The River Runner can reach the back row in one diagonal move.",
       "board": [
-        [null, null, null, null, null],
-        [null, null, null, {"type": "RIVER_RUNNER", "player": "white"}, null],
-        [null, null, null, null, null],
-        [null, null, null, null, null],
-        [{"type": "CHIEF", "player": "white"}, null, null, null, {"type": "CHIEF", "player": "black"}]
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          {
+            "type": "RIVER_RUNNER",
+            "player": "white"
+          },
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          }
+        ]
       ],
-      "win_condition": { "type": "cross_piece", "max_moves": 1 },
+      "win_condition": {
+        "type": "cross_piece",
+        "max_moves": 1
+      },
       "opponent_moves": []
     },
     {
       "type": "dialog",
       "lines": [
-        { "speaker": "Nume", "portrait": "nume_neutral", "text": "The river paths serve us well." },
-        { "speaker": "Elder", "portrait": "elder_neutral", "text": "Two more trials remain before you face the darkness itself." }
+        {
+          "speaker": "Nume",
+          "portrait": "nume_neutral",
+          "text": "The river paths serve us well."
+        },
+        {
+          "speaker": "Elder",
+          "portrait": "elder_neutral",
+          "text": "Two more trials remain before you face the darkness itself."
+        }
       ]
     },
     {
@@ -218,21 +665,78 @@
       "player": "white",
       "hint": "The Trader jumps in an L-shape. It can leap over the blocking piece.",
       "board": [
-        [null, null, {"type": "CHIEF", "player": "black"}, null, null],
-        [null, null, {"type": "HUNTER", "player": "black"}, null, null],
-        [null, {"type": "TRADER", "player": "white"}, null, null, null],
-        [null, null, null, null, null],
-        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+        [
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          },
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          {
+            "type": "HUNTER",
+            "player": "black"
+          },
+          null,
+          null
+        ],
+        [
+          null,
+          {
+            "type": "TRADER",
+            "player": "white"
+          },
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          null
+        ]
       ],
-      "win_condition": { "type": "capture_chief", "max_moves": 1 },
+      "win_condition": {
+        "type": "capture_chief",
+        "max_moves": 1
+      },
       "opponent_moves": []
     },
     {
       "type": "dialog",
       "lines": [
-        { "speaker": "Elder", "portrait": "elder_neutral", "text": "Your final trial. This one will test everything you have learned." },
-        { "speaker": "Nume", "portrait": "nume_neutral", "text": "I am ready." },
-        { "speaker": null, "portrait": null, "text": "The elder places the pieces on the board one last time." }
+        {
+          "speaker": "Elder",
+          "portrait": "elder_neutral",
+          "text": "Your final trial. This one will test everything you have learned."
+        },
+        {
+          "speaker": "Nume",
+          "portrait": "nume_neutral",
+          "text": "I am ready."
+        },
+        {
+          "speaker": null,
+          "portrait": null,
+          "text": "The elder places the pieces on the board one last time."
+        }
       ]
     },
     {
@@ -243,21 +747,77 @@
       "player": "white",
       "hint": "Move the Hunter onto the same row as the Chief. When the Chief flees along the row, follow with the capture.",
       "board": [
-        [null, null, null, null, null],
-        [null, null, {"type": "CHIEF", "player": "black"}, null, null],
-        [null, null, null, null, null],
-        [null, null, null, null, null],
-        [{"type": "CHIEF", "player": "white"}, {"type": "HUNTER", "player": "white"}, null, null, null]
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          },
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          {
+            "type": "HUNTER",
+            "player": "white"
+          },
+          null,
+          null,
+          null
+        ]
       ],
-      "win_condition": { "type": "capture_chief", "max_moves": 5 },
-      "opponent_moves": ["Kd4"]
+      "win_condition": {
+        "type": "capture_chief",
+        "max_moves": 2
+      },
+      "opponent_moves": [
+        "Kd4"
+      ]
     },
     {
       "type": "dialog",
       "lines": [
-        { "speaker": "Elder", "portrait": "elder_neutral", "text": "You have passed, Nume. You are ready to face what comes." },
-        { "speaker": "Nume", "portrait": "nume_neutral", "text": "Then I ride at dawn." },
-        { "speaker": null, "portrait": null, "text": "Chapter 1 complete. The gathering storm awaits..." }
+        {
+          "speaker": "Elder",
+          "portrait": "elder_neutral",
+          "text": "You have passed, Nume. You are ready to face what comes."
+        },
+        {
+          "speaker": "Nume",
+          "portrait": "nume_neutral",
+          "text": "Then I ride at dawn."
+        },
+        {
+          "speaker": null,
+          "portrait": null,
+          "text": "Chapter 1 complete. The gathering storm awaits..."
+        }
       ]
     }
   ]
