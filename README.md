@@ -1,7 +1,180 @@
-# Wachesaw — Complete Build Specification
+# Wachesaw
 
-*Version 0.2 — February 15, 2026*
 *A Waccamaw-themed strategy game built in Godot 4*
+
+**"Happy Hunting… or Place of Great Weeping?"**
+
+Wachesaw is a chess-like strategy game on a 5×5 board with unique pieces, a swap mechanic, and two ways to win — capture the opponent's Chief, or cross a piece to their back row. Play through a single-player story campaign, or jump into a match against the AI.
+
+---
+
+## Quick Start (macOS)
+
+The fastest way to get playing on a Mac. Requires [Homebrew](https://brew.sh) and [just](https://github.com/casey/just) (`brew install just`).
+
+```bash
+git clone https://github.com/doughatcher/wachesaw.git
+cd wachesaw
+just mac-setup
+```
+
+This installs Godot 4.4, GTK4 Python bindings, and creates two app shortcuts in `~/Applications/` that you can launch from **Spotlight** (⌘Space):
+
+| App | What it does |
+|-----|-------------|
+| **Wachesaw** | Launches the game |
+| **Wachesaw Level Editor** | Opens the visual puzzle/story editor |
+
+You can also launch from the terminal:
+
+```bash
+# Play the game
+just mac-level-editor data/story/chapter_1.json   # then hit ▶ Play
+
+# Or launch Godot directly
+/Applications/Godot_v4.4.app/Contents/MacOS/Godot --path .
+```
+
+---
+
+## Quick Start (Dev Container — any OS)
+
+If you're on Linux/Windows, or prefer a containerized setup, open the repo in VS Code with the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers). Everything is pre-installed in the container (Godot 4.4, Python, GTK4, export templates).
+
+```bash
+git clone https://github.com/doughatcher/wachesaw.git
+code wachesaw/   # VS Code → "Reopen in Container" when prompted
+```
+
+The container auto-builds the web export and serves it on port **8000** — open `http://localhost:8000` in your browser to play.
+
+### Level Editor via X11 Forwarding
+
+The level editor is a native GTK4 desktop app. To run it from inside the dev container, you need X11 forwarding so the container can draw windows on your host display.
+
+**Linux host** — works out of the box. The container mounts `/tmp/.X11-unix` and passes your `$DISPLAY` variable automatically:
+
+```bash
+# Inside the container terminal:
+just level-editor                          # opens file chooser
+just edit-chapter 1                        # opens chapter 1
+```
+
+**macOS host** — install [XQuartz](https://www.xquartz.org) first:
+
+```bash
+brew install --cask xquartz
+```
+
+Then open XQuartz → Preferences → Security → **check "Allow connections from network clients"**. Log out and back in (or reboot) for the setting to take effect. After that, the level editor will render on your Mac desktop through XQuartz.
+
+**Windows host** — install [VcXsrv](https://sourceforge.net/projects/vcxsrv/) or [X410](https://x410.dev). Launch it with "Disable access control" checked, then set `DISPLAY=host.docker.internal:0` in the container environment.
+
+If X11 isn't available, you can still edit chapter JSON files directly — they're human-readable. Or use the web workflow: `just watch-story 1` builds a debug web export with hot-reload.
+
+---
+
+## Level Editor
+
+The level editor (`tools/level_editor.py`) is a GTK4 visual tool for authoring story chapters — the JSON files under `data/story/` that define the single-player campaign.
+
+### What it does
+
+Each chapter is a sequence of **steps** — dialog scenes (story text with speaker portraits) and puzzle scenes (a board position the player must solve). The editor lets you:
+
+- **Add, reorder, and delete steps** in the left sidebar
+- **Edit puzzle boards** visually — click any cell to place or change a piece
+- **Set puzzle metadata** — win condition, max moves, opponent scripted responses, hints
+- **Edit dialog lines** — speaker, portrait, and text for each line
+- **Play-test instantly** — hit ▶ Play to launch the puzzle in Godot (macOS native mode) or in a browser (dev container / web mode). Edits are hot-reloaded on save.
+
+### How it works
+
+| Mode | How Play works | Setup |
+|------|---------------|-------|
+| **Native (macOS)** | Launches Godot directly. Subsequent saves hot-reload via file polling — no restart needed. Godot grabs focus automatically. | `just mac-level-editor` |
+| **Web (container)** | Builds a web debug export, starts a dev server, opens your browser. File changes are served live. | `just level-editor` (needs X11) or `just watch-story N` (no GUI) |
+
+### File format
+
+Chapters live in `data/story/chapter_N.json`. Each file has a `title` and a `steps` array:
+
+```json
+{
+  "title": "The Gathering Storm",
+  "steps": [
+    {
+      "type": "dialog",
+      "lines": [
+        { "speaker": "Elder", "portrait": "elder_neutral", "text": "The Waccamaw lands have known peace…" }
+      ]
+    },
+    {
+      "type": "puzzle",
+      "id": "ch1_p01",
+      "title": "The First Lesson",
+      "description": "Capture the enemy Chief to win.",
+      "player": "white",
+      "board": [ [null, null, ...], ... ],
+      "win_condition": { "type": "capture_chief", "max_moves": 1 },
+      "opponent_moves": ["Kd4"],
+      "hint": "The Keeper can reach the Chief in one move."
+    }
+  ]
+}
+```
+
+The game's `MapWatcher` autoload watches for file changes and hot-reloads the current puzzle, so you get a tight edit → save → see loop.
+
+---
+
+## Development Commands
+
+All commands use [just](https://github.com/casey/just) (`brew install just` or included in the dev container).
+
+### macOS
+
+| Command | Description |
+|---------|-------------|
+| `just mac-setup` | Install Godot 4.4, GTK4 deps, create Spotlight shortcuts |
+| `just mac-level-editor` | Open the level editor (native Godot playback) |
+| `just mac-edit-chapter N` | Open chapter N in the level editor |
+
+### Dev Container / Linux
+
+| Command | Description |
+|---------|-------------|
+| `just level-editor` | Open the GTK4 level editor (needs X11 display) |
+| `just edit-chapter N` | Open chapter N in the level editor |
+| `just watch-story N` | Build web debug + serve chapter N with hot-reload |
+| `just watch-story N puzzle_id` | Same, jumping to a specific puzzle |
+| `just serve` | Serve the web build on port 8000 |
+
+### Building
+
+| Command | Description |
+|---------|-------------|
+| `just build-web` | Release web export → `builds/web/` |
+| `just build-web-debug` | Debug web export (for dev server) |
+| `just build-linux` | Linux x86_64 binary |
+| `just build-macos` | macOS export |
+| `just build-windows` | Windows .exe |
+| `just build-all` | All desktop + web |
+
+### Utility
+
+| Command | Description |
+|---------|-------------|
+| `just editor` | Open the Godot editor |
+| `just clean` | Remove all build artifacts |
+| `just clean-all` | Remove builds + Godot import cache |
+| `just release` | Tag a release and push to GitHub |
+
+---
+
+## Build Specification
+
+*Everything below is the detailed design spec — rules, AI, architecture, platform targets, and roadmap.*
 
 ---
 
