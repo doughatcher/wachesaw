@@ -11,9 +11,13 @@ Dependencies (Ubuntu/Debian):
     sudo apt-get install python3-gi gir1.2-gtk-4.0
 """
 
+import os
+import signal
+import subprocess
 import sys
 import copy
 import json
+import webbrowser
 from pathlib import Path
 
 try:
@@ -474,9 +478,12 @@ class LevelEditorWindow(Gtk.ApplicationWindow):
         self._filepath: str | None = None
         self._current_idx: int = -1
         self._dirty: bool = False
+        self._server_proc: subprocess.Popen | None = None
+        self._server_port: int = 8001  # Use 8001 to avoid conflict with 'just serve' on 8000
 
         self._install_css()
         self._build_ui()
+        self.connect("close-request", self._on_close_request)
 
     # ── CSS ───────────────────────────────────────────────────────────────────
 
@@ -499,6 +506,12 @@ class LevelEditorWindow(Gtk.ApplicationWindow):
         open_btn = Gtk.Button(label="Open…")
         open_btn.connect("clicked", self._open_file)
         header.pack_start(open_btn)
+
+        self._play_btn = Gtk.Button(label="▶ Play")
+        self._play_btn.set_tooltip_text("Save & play in browser (launches dev server)")
+        self._play_btn.connect("clicked", self._play_in_browser)
+        self._play_btn.set_sensitive(False)
+        header.pack_start(self._play_btn)
 
         save_btn = Gtk.Button(label="Save")
         save_btn.add_css_class("suggested-action")
@@ -579,6 +592,122 @@ class LevelEditorWindow(Gtk.ApplicationWindow):
 
         paned.set_end_child(self._stack)
 
+    # ── Play in browser ────────────────────────────────────────────────────────
+
+    def _play_in_browser(self, _btn=None):
+        """Save the current file, launch dev server, and open the game in a browser."""
+        if not self._chapter or not self._filepath:
+            return
+
+        # Save first so the browser sees the latest content
+        self._save_file()
+        if self._dirty:  # save failed
+            return
+
+        # Derive the watch path relative to data/ (e.g. "story/chapter_1.json")
+        try:
+            watch_rel = str(Path(self._filepath).resolve().relative_to(DATA_DIR.resolve()))
+        except ValueError:
+            self._error(
+                f"File is not inside the data directory:\n"
+                f"{self._filepath}\n\n"
+                f"The Play button requires the file to be under:\n{DATA_DIR}"
+            )
+            return
+
+        # Find the target puzzle ID from the current step selection
+        puzzle_arg = ""
+        if self._current_idx >= 0:
+            steps = self._chapter.get("steps", [])
+            if self._current_idx < len(steps):
+                step = steps[self._current_idx]
+                if step.get("type") == "puzzle":
+                    puzzle_arg = step.get("id", "")
+                else:
+                    # For dialog steps, find the next puzzle step
+                    for s in steps[self._current_idx + 1:]:
+                        if s.get("type") == "puzzle":
+                            puzzle_arg = s.get("id", "")
+                            break
+
+        # Kill any existing server (ours or anything else on the port)
+        self._kill_server()
+        self._kill_port(self._server_port)
+
+        # Build the dev server command
+        server_script = Path(__file__).resolve().parent / "dev_server.py"
+        cmd = [
+            sys.executable, str(server_script),
+            str(self._server_port),
+            f"--watch={watch_rel}",
+        ]
+        if puzzle_arg:
+            cmd.append(f"--puzzle={puzzle_arg}")
+
+        try:
+            self._server_proc = subprocess.Popen(
+                cmd,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.PIPE,
+                preexec_fn=os.setsid,
+            )
+        except Exception as exc:
+            self._error(f"Could not start dev server:\n{exc}")
+            return
+
+        # Update button state
+        self._play_btn.set_label("▶ Playing…")
+        self._play_btn.set_tooltip_text(
+            f"Server running on port {self._server_port}\n"
+            f"Watching: {watch_rel}"
+            + (f"\nPuzzle: {puzzle_arg}" if puzzle_arg else "")
+            + "\nClick to restart with current step"
+        )
+
+        # Give the server a moment to start, then open the browser
+        url = f"http://localhost:{self._server_port}"
+        GLib.timeout_add(600, self._open_browser, url)
+
+    def _open_browser(self, url: str) -> bool:
+        """Open the browser (called from GLib.timeout_add, returns False to not repeat)."""
+        browser_env = os.environ.get("BROWSER")
+        if browser_env:
+            subprocess.Popen([browser_env, url], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        else:
+            webbrowser.open(url)
+        return False  # don't repeat
+
+    def _kill_server(self):
+        """Kill the dev server subprocess if running."""
+        if self._server_proc is not None:
+            try:
+                os.killpg(os.getpgid(self._server_proc.pid), signal.SIGTERM)
+            except (ProcessLookupError, PermissionError):
+                pass
+            self._server_proc = None
+            self._play_btn.set_label("▶ Play")
+
+    @staticmethod
+    def _kill_port(port: int):
+        """Kill any process listening on the given TCP port."""
+        try:
+            out = subprocess.check_output(
+                ["lsof", "-ti", f"TCP:{port}", "-sTCP:LISTEN"],
+                stderr=subprocess.DEVNULL, text=True,
+            )
+            for pid_str in out.strip().split():
+                try:
+                    os.kill(int(pid_str), signal.SIGTERM)
+                except (ProcessLookupError, PermissionError, ValueError):
+                    pass
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            pass  # lsof not found or no process on port — fine
+
+    def _on_close_request(self, _window):
+        """Clean up server process when the editor window closes."""
+        self._kill_server()
+        return False  # allow the window to close
+
     # ── Public API ────────────────────────────────────────────────────────────
 
     def load_file(self, path: str):
@@ -624,6 +753,7 @@ class LevelEditorWindow(Gtk.ApplicationWindow):
         self._filepath = path
         self._dirty = False
         self._current_idx = -1
+        self._play_btn.set_sensitive(True)
         self._update_title()
         self._rebuild_step_list()
         self._stack.set_visible_child_name("placeholder")

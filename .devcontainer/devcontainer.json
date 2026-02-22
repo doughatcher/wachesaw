@@ -40,7 +40,7 @@
     "-v", "/tmp/.X11-unix:/tmp/.X11-unix:rw",
     "-e", "DISPLAY"
   ],
-  "forwardPorts": [8000, 6007],
+  "forwardPorts": [8000, 8001, 6007],
   "postCreateCommand": "godot --headless --import 2>/dev/null || true",
   "postAttachCommand": "just serve",
   "remoteUser": "root"
