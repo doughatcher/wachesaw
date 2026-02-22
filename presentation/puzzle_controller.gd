@@ -240,7 +240,8 @@ func _execute_opponent_move() -> void:
 	var move = StoryData.parse_move_notation(notation, board, opponent_side)
 
 	if move == null:
-		push_warning("PuzzleController: Invalid scripted move: %s" % notation)
+		push_warning("PuzzleController: Invalid scripted move '%s' — skipping (index=%d)" % [notation, opponent_move_index])
+		opponent_move_index += 1  # Advance past broken move to avoid infinite retry
 		turn = player_side
 		_update_ui()
 		return

@@ -66,7 +66,7 @@
         [{"type": "CHIEF", "player": "white"}, null, null, null, null]
       ],
       "win_condition": { "type": "capture_chief", "max_moves": 2 },
-      "opponent_moves": ["Kd1"]
+      "opponent_moves": ["Kd5"]
     },
     {
       "type": "puzzle",

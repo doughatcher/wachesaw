@@ -76,10 +76,7 @@
           null
         ],
         [
-          {
-            "type": "CHIEF",
-            "player": "white"
-          },
+          null,
           null,
           null,
           null,
@@ -400,7 +397,7 @@
         "max_moves": 2
       },
       "opponent_moves": [
-        "Kd1"
+        "Kd4"
       ]
     },
     {
@@ -797,7 +794,7 @@
         "max_moves": 2
       },
       "opponent_moves": [
-        "Kd4"
+        "Kc2"
       ]
     },
     {

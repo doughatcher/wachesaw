@@ -104,8 +104,10 @@ def empty_board():
 EDITOR_CSS = b"""
 .board-cell-light { background-color: #f0d9b5; }
 .board-cell-dark  { background-color: #b58863; }
-.board-cell       { border-radius: 0; border: 1px solid #888; min-width: 54px; min-height: 54px; }
-.board-cell label { font-size: 26px; }
+.board-cell       { border-radius: 0; border: 1px solid #888; min-width: 80px; min-height: 80px; }
+.board-cell label { font-size: 40px; }
+.col-label        { font-size: 14px; font-weight: bold; }
+.row-label        { font-size: 14px; font-weight: bold; }
 .piece-white      { color: #222222; }
 .piece-black      { color: #222222; }
 .step-row         { padding: 4px 8px; }
@@ -186,15 +188,15 @@ class BoardGrid(Gtk.Box):
         # Column labels (a–e)
         for col in range(BOARD_SIZE):
             lbl = Gtk.Label(label=chr(ord("a") + col))
-            lbl.add_css_class("caption")
+            lbl.add_css_class("col-label")
             grid.attach(lbl, col + 1, 0, 1, 1)
 
         for row in range(BOARD_SIZE):
             # Row label
             lbl = Gtk.Label(label=str(row))
-            lbl.add_css_class("caption")
+            lbl.add_css_class("row-label")
             lbl.set_xalign(1.0)
-            lbl.set_margin_end(4)
+            lbl.set_margin_end(6)
             grid.attach(lbl, 0, row + 1, 1, 1)
 
             for col in range(BOARD_SIZE):
@@ -228,9 +230,9 @@ class BoardGrid(Gtk.Box):
                 btn.set_child(child)
 
             if sym:
-                child.set_markup(f'<span font="26">{sym}</span>')
+                child.set_markup(f'<span font="40">{sym}</span>')
             else:
-                child.set_markup('<span font="14" alpha="50%">·</span>')
+                child.set_markup('<span font="18" alpha="50%">-</span>')
 
             btn.set_tooltip_text(piece_tooltip(cell))
 
@@ -359,35 +361,42 @@ class PuzzleEditor(Gtk.Box):
     """Editor for a 'puzzle' step."""
 
     def __init__(self, on_change=None):
-        super().__init__(orientation=Gtk.Orientation.HORIZONTAL, spacing=16)
+        super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=12)
         self._on_change = on_change
         self._loading = False
 
-        self.set_margin_start(12)
-        self.set_margin_end(12)
+        self.set_margin_start(16)
+        self.set_margin_end(16)
         self.set_margin_top(12)
         self.set_margin_bottom(12)
 
-        # ── Left column: board ───────────────────────────────────────
-        board_col = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        # ── Top: board (centered, large) ─────────────────────────────
         board_hdr = Gtk.Label(label="Board  (click a cell to place / change a piece)")
         board_hdr.add_css_class("heading")
         board_hdr.set_xalign(0)
-        board_col.append(board_hdr)
+        self.append(board_hdr)
+
+        board_center = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        board_center.set_halign(Gtk.Align.CENTER)
         self._board_grid = BoardGrid(on_change=lambda _b: self._notify())
-        board_col.append(self._board_grid)
-        self.append(board_col)
+        board_center.append(self._board_grid)
+        self.append(board_center)
 
-        # ── Right column: metadata ───────────────────────────────────
-        meta_col = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
-        meta_col.set_hexpand(True)
-        meta_col.set_vexpand(True)
-        self.append(meta_col)
-
+        # ── Bottom: metadata fields in a scrollable area ─────────────
         meta_hdr = Gtk.Label(label="Puzzle Metadata")
         meta_hdr.add_css_class("heading")
         meta_hdr.set_xalign(0)
-        meta_col.append(meta_hdr)
+        self.append(meta_hdr)
+
+        meta_scroll = Gtk.ScrolledWindow()
+        meta_scroll.set_vexpand(True)
+        meta_scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+
+        meta_col = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        meta_col.set_margin_top(4)
+        meta_col.set_margin_bottom(8)
+        meta_scroll.set_child(meta_col)
+        self.append(meta_scroll)
 
         def row(label_text, widget):
             box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
@@ -488,7 +497,7 @@ class LevelEditorWindow(Gtk.ApplicationWindow):
 
     def __init__(self, app: Gtk.Application):
         super().__init__(application=app, title="Wachesaw Level Editor")
-        self.set_default_size(1280, 820)
+        self.set_default_size(1100, 960)
 
         self._chapter: dict | None = None
         self._filepath: str | None = None

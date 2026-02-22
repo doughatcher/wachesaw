@@ -160,8 +160,88 @@ mac-setup:
     echo "Importing project resources…"
     "$GODOT_BIN" --headless --import 2>/dev/null || true
 
+    # ── Create Spotlight-launchable .app shortcuts ──────────────────
+    PROJECT_DIR="$(pwd)"
+    BREW_PYTHON="$(brew --prefix)/bin/python3"
+    APPS_DIR="$HOME/Applications"
+    mkdir -p "$APPS_DIR"
+
+    # — Wachesaw.app (launches the game) —
+    GAME_APP="$APPS_DIR/Wachesaw.app"
+    rm -rf "$GAME_APP"
+    mkdir -p "$GAME_APP/Contents/MacOS"
+    cat > "$GAME_APP/Contents/Info.plist" << PLIST
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+    <plist version="1.0">
+    <dict>
+        <key>CFBundleName</key>
+        <string>Wachesaw</string>
+        <key>CFBundleIdentifier</key>
+        <string>com.wachesaw.game</string>
+        <key>CFBundleExecutable</key>
+        <string>launch</string>
+        <key>CFBundleVersion</key>
+        <string>1.0</string>
+        <key>CFBundlePackageType</key>
+        <string>APPL</string>
+    </dict>
+    </plist>
+    PLIST
+    # Strip leading whitespace from heredoc (justfile indents it)
+    sed -i '' 's/^    //' "$GAME_APP/Contents/Info.plist"
+
+    cat > "$GAME_APP/Contents/MacOS/launch" << 'LAUNCH'
+    #!/usr/bin/env bash
+    LAUNCH
+    # Write the script body with resolved paths
+    cat >> "$GAME_APP/Contents/MacOS/launch" << LAUNCH
+    exec "$GODOT_BIN" --path "$PROJECT_DIR"
+    LAUNCH
+    sed -i '' 's/^    //' "$GAME_APP/Contents/MacOS/launch"
+    chmod +x "$GAME_APP/Contents/MacOS/launch"
+    echo "✓ Created $GAME_APP"
+
+    # — Wachesaw Level Editor.app —
+    EDITOR_APP="$APPS_DIR/Wachesaw Level Editor.app"
+    rm -rf "$EDITOR_APP"
+    mkdir -p "$EDITOR_APP/Contents/MacOS"
+    cat > "$EDITOR_APP/Contents/Info.plist" << PLIST
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+    <plist version="1.0">
+    <dict>
+        <key>CFBundleName</key>
+        <string>Wachesaw Level Editor</string>
+        <key>CFBundleIdentifier</key>
+        <string>com.wachesaw.level-editor</string>
+        <key>CFBundleExecutable</key>
+        <string>launch</string>
+        <key>CFBundleVersion</key>
+        <string>1.0</string>
+        <key>CFBundlePackageType</key>
+        <string>APPL</string>
+    </dict>
+    </plist>
+    PLIST
+    sed -i '' 's/^    //' "$EDITOR_APP/Contents/Info.plist"
+
+    cat > "$EDITOR_APP/Contents/MacOS/launch" << 'LAUNCH'
+    #!/usr/bin/env bash
+    LAUNCH
+    cat >> "$EDITOR_APP/Contents/MacOS/launch" << LAUNCH
+    exec "$BREW_PYTHON" "$PROJECT_DIR/tools/level_editor.py" --native --godot-path="$GODOT_BIN"
+    LAUNCH
+    sed -i '' 's/^    //' "$EDITOR_APP/Contents/MacOS/launch"
+    chmod +x "$EDITOR_APP/Contents/MacOS/launch"
+    echo "✓ Created $EDITOR_APP"
+
     echo ""
-    echo "✓ macOS setup complete. Run: just mac-level-editor"
+    echo "✓ macOS setup complete."
+    echo "  Spotlight shortcuts installed in ~/Applications/:"
+    echo "    • Wachesaw             — launches the game"
+    echo "    • Wachesaw Level Editor — opens the level editor"
+    echo "  Run: just mac-level-editor"
 
 # Open the level editor with native Godot playback (macOS).
 # When you hit Play, Godot launches natively instead of using a web browser.
