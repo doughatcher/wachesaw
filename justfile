@@ -97,6 +97,98 @@ level-editor path="":
 edit-chapter chapter="1":
     python3 tools/level_editor.py data/story/chapter_{{chapter}}.json
 
+# ─── macOS Native ────────────────────────────────────────────────
+
+# Godot version must match the project (see project.godot config/features).
+GODOT_VERSION := "4.4"
+GODOT_INSTALL_DIR := "/Applications/Godot_v" + GODOT_VERSION + ".app"
+GODOT_BIN := GODOT_INSTALL_DIR + "/Contents/MacOS/Godot"
+
+# Install macOS dependencies for the level editor and native Godot playback.
+# Requires Homebrew (https://brew.sh). Run once after cloning.
+# Installs Godot 4.4 specifically (brew cask installs latest which may be incompatible).
+mac-setup:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    echo "Installing macOS dependencies via Homebrew…"
+    brew install gtk4 pygobject3 gobject-introspection adwaita-icon-theme
+
+    GODOT_VERSION="{{GODOT_VERSION}}"
+    GODOT_FULL="Godot_v${GODOT_VERSION}-stable"
+    INSTALL_DIR="{{GODOT_INSTALL_DIR}}"
+    GODOT_BIN="${INSTALL_DIR}/Contents/MacOS/Godot"
+
+    if [ -x "$GODOT_BIN" ]; then
+        INSTALLED=$("$GODOT_BIN" --version 2>/dev/null | cut -d. -f1-2 || echo "")
+        if [ "$INSTALLED" = "${GODOT_VERSION}" ]; then
+            echo "✓ Godot ${GODOT_VERSION} already installed at ${INSTALL_DIR}"
+        else
+            echo "⚠ Godot at ${INSTALL_DIR} is version ${INSTALLED}, expected ${GODOT_VERSION}"
+            echo "  Reinstalling…"
+            rm -rf "$INSTALL_DIR"
+        fi
+    fi
+
+    if [ ! -x "$GODOT_BIN" ]; then
+        echo "Installing Godot ${GODOT_VERSION} for macOS…"
+        URL="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/${GODOT_FULL}_macos.universal.zip"
+        TMPZIP="$(mktemp /tmp/godot-XXXX.zip)"
+        echo "  Downloading from ${URL}…"
+        curl -L -o "$TMPZIP" "$URL"
+        echo "  Extracting to ${INSTALL_DIR}…"
+        TMPDIR_EXTRACT="$(mktemp -d /tmp/godot-extract-XXXX)"
+        unzip -q "$TMPZIP" -d "$TMPDIR_EXTRACT"
+        # The zip contains a Godot.app folder — rename to include the version
+        mv "$TMPDIR_EXTRACT/Godot.app" "$INSTALL_DIR"
+        rm -rf "$TMPZIP" "$TMPDIR_EXTRACT"
+        # Remove quarantine attribute so macOS doesn't block it
+        xattr -rd com.apple.quarantine "$INSTALL_DIR" 2>/dev/null || true
+        echo "✓ Godot ${GODOT_VERSION} installed at ${INSTALL_DIR}"
+    fi
+
+    echo ""
+    echo "Verifying GTK4 Python bindings…"
+    "$(brew --prefix)/bin/python3" -c \
+        "import gi; gi.require_version('Gtk', '4.0'); from gi.repository import Gtk; print('✓ GTK4 bindings OK')"
+
+    echo ""
+    echo "Verifying Godot…"
+    "$GODOT_BIN" --version
+
+    echo ""
+    echo "Importing project resources…"
+    "$GODOT_BIN" --headless --import 2>/dev/null || true
+
+    echo ""
+    echo "✓ macOS setup complete. Run: just mac-level-editor"
+
+# Open the level editor with native Godot playback (macOS).
+# When you hit Play, Godot launches natively instead of using a web browser.
+# Usage: just mac-level-editor                            (opens file chooser)
+#        just mac-level-editor data/story/chapter_1.json
+mac-level-editor path="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    BREW_PYTHON="$(brew --prefix)/bin/python3"
+    GODOT="${GODOT_PATH:-{{GODOT_BIN}}}"
+    if [ ! -x "$GODOT" ]; then
+        echo "✗ Godot not found at $GODOT"
+        echo "  Run: just mac-setup"
+        echo "  Or set GODOT_PATH to your Godot 4.4 binary"
+        exit 1
+    fi
+    if [ -n "{{path}}" ]; then
+        "$BREW_PYTHON" tools/level_editor.py --native --godot-path="$GODOT" {{path}}
+    else
+        "$BREW_PYTHON" tools/level_editor.py --native --godot-path="$GODOT"
+    fi
+
+# Edit a story chapter with native Godot playback (macOS).
+# Usage: just mac-edit-chapter 1
+mac-edit-chapter chapter="1":
+    just mac-level-editor data/story/chapter_{{chapter}}.json
+
 # Run headless (for testing core logic)
 run-headless:
     godot --headless --script tests/run_tests.gd

@@ -7,8 +7,18 @@ Usage:
     just level-editor               (opens file chooser)
     just edit-chapter 1             (opens chapter 1)
 
+    # macOS native mode — Play button launches Godot directly:
+    python3 tools/level_editor.py --native --godot-path=/path/to/godot [chapter.json]
+    just mac-level-editor           (uses brew Python + Godot)
+    just mac-edit-chapter 1         (opens chapter 1 natively)
+
 Dependencies (Ubuntu/Debian):
     sudo apt-get install python3-gi gir1.2-gtk-4.0
+
+Dependencies (macOS via Homebrew):
+    brew install gtk4 pygobject3 gobject-introspection adwaita-icon-theme
+    brew install --cask godot       (for native Play mode)
+    # Or run: just mac-setup
 """
 
 import os
@@ -26,12 +36,18 @@ try:
     from gi.repository import Gtk, Gio, GLib, Gdk, Pango
 except (ImportError, ValueError) as _err:
     print(f"Error: GTK4 Python bindings not available: {_err}")
-    print("Install with:  sudo apt-get install python3-gi gir1.2-gtk-4.0")
+    if sys.platform == "darwin":
+        print("Install with:  brew install gtk4 pygobject3 gobject-introspection adwaita-icon-theme")
+        print("Then run with: $(brew --prefix)/bin/python3 tools/level_editor.py")
+        print("Or just run:   just mac-setup && just mac-level-editor")
+    else:
+        print("Install with:  sudo apt-get install python3-gi gir1.2-gtk-4.0")
     sys.exit(1)
 
 # ── Constants ──────────────────────────────────────────────────────────────────
 
-DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+PROJECT_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = PROJECT_DIR / "data"
 
 PIECE_TYPES = ["CHIEF", "HUNTER", "KEEPER", "RIVER_RUNNER", "TRADER"]
 PLAYERS = ["white", "black"]
@@ -481,6 +497,11 @@ class LevelEditorWindow(Gtk.ApplicationWindow):
         self._server_proc: subprocess.Popen | None = None
         self._server_port: int = 8001  # Use 8001 to avoid conflict with 'just serve' on 8000
 
+        # Native Godot playback (macOS) — set via --native / --godot-path CLI flags
+        self._native_mode: bool = getattr(app, "native_mode", False)
+        self._godot_path: str = getattr(app, "godot_path", "")
+        self._godot_proc: subprocess.Popen | None = None
+
         self._install_css()
         self._build_ui()
         self.connect("close-request", self._on_close_request)
@@ -508,8 +529,12 @@ class LevelEditorWindow(Gtk.ApplicationWindow):
         header.pack_start(open_btn)
 
         self._play_btn = Gtk.Button(label="▶ Play")
-        self._play_btn.set_tooltip_text("Save & play in browser (launches dev server)")
-        self._play_btn.connect("clicked", self._play_in_browser)
+        if self._native_mode:
+            self._play_btn.set_tooltip_text("Save & play natively (launches Godot)")
+            self._play_btn.connect("clicked", self._play_native)
+        else:
+            self._play_btn.set_tooltip_text("Save & play in browser (launches dev server)")
+            self._play_btn.connect("clicked", self._play_in_browser)
         self._play_btn.set_sensitive(False)
         header.pack_start(self._play_btn)
 
@@ -703,9 +728,137 @@ class LevelEditorWindow(Gtk.ApplicationWindow):
         except (subprocess.CalledProcessError, FileNotFoundError):
             pass  # lsof not found or no process on port — fine
 
+    # ── Native Godot playback ──────────────────────────────────────────────────
+
+    def _play_native(self, _btn=None):
+        """Save the current file and play in native Godot.
+
+        First click launches Godot with --map-watch. Subsequent clicks just
+        save the file — MapWatcher's 0.5s polling picks up changes automatically.
+        """
+        if not self._chapter or not self._filepath:
+            return
+
+        # Always save so Godot sees the latest content
+        self._save_file()
+        if self._dirty:  # save failed
+            return
+
+        # If Godot is already running, just saving is enough (hot-reload)
+        if self._godot_proc is not None and self._godot_proc.poll() is None:
+            self._play_btn.set_label("▶ Saved")
+            # Reset label after a moment
+            GLib.timeout_add(800, self._reset_play_label_native)
+            return
+
+        # Derive the watch path relative to data/ (e.g. "story/chapter_1.json")
+        try:
+            watch_rel = str(Path(self._filepath).resolve().relative_to(DATA_DIR.resolve()))
+        except ValueError:
+            self._error(
+                f"File is not inside the data directory:\n"
+                f"{self._filepath}\n\n"
+                f"The Play button requires the file to be under:\n{DATA_DIR}"
+            )
+            return
+
+        # Find the target puzzle ID from the current step selection
+        puzzle_arg = ""
+        if self._current_idx >= 0:
+            steps = self._chapter.get("steps", [])
+            if self._current_idx < len(steps):
+                step = steps[self._current_idx]
+                if step.get("type") == "puzzle":
+                    puzzle_arg = step.get("id", "")
+                else:
+                    # For dialog steps, find the next puzzle step
+                    for s in steps[self._current_idx + 1:]:
+                        if s.get("type") == "puzzle":
+                            puzzle_arg = s.get("id", "")
+                            break
+
+        # Build the Godot command.
+        # Don't specify a scene — let the main scene load normally so that
+        # MapWatcher._autostart() can load the JSON data before navigating
+        # to the puzzle scene. (Avoids race where PuzzleController._ready()
+        # reads empty GameSettings.story_puzzle_data.)
+        cmd = [
+            self._godot_path,
+            "--path", str(PROJECT_DIR),
+            "--",
+            f"--map-watch={watch_rel}",
+        ]
+        if puzzle_arg:
+            cmd.append(f"--puzzle={puzzle_arg}")
+
+        print(f"[LevelEditor] Launching Godot: {' '.join(cmd)}")
+
+        try:
+            self._godot_proc = subprocess.Popen(
+                cmd,
+                stdout=None,  # Inherit terminal for debug output
+                stderr=None,
+            )
+        except FileNotFoundError:
+            self._error(
+                f"Could not find Godot binary:\n{self._godot_path}\n\n"
+                "Install with: brew install --cask godot\n"
+                "Or set GODOT_PATH to your Godot binary."
+            )
+            return
+        except Exception as exc:
+            self._error(f"Could not launch Godot:\n{exc}")
+            return
+
+        # Update button state
+        self._play_btn.set_label("▶ Playing…")
+        self._play_btn.set_tooltip_text(
+            f"Godot running (PID {self._godot_proc.pid})\n"
+            f"Watching: {watch_rel}"
+            + (f"\nPuzzle: {puzzle_arg}" if puzzle_arg else "")
+            + "\nClick to save & hot-reload"
+        )
+
+        # Poll for Godot exit so we can reset the button
+        GLib.timeout_add(1000, self._poll_godot_proc)
+
+    def _poll_godot_proc(self) -> bool:
+        """Check if the Godot process is still running (GLib timeout callback)."""
+        if self._godot_proc is None or self._godot_proc.poll() is not None:
+            self._godot_proc = None
+            self._play_btn.set_label("▶ Play")
+            self._play_btn.set_tooltip_text("Save & play natively (launches Godot)")
+            return False  # stop polling
+        return True  # keep polling
+
+    def _reset_play_label_native(self) -> bool:
+        """Reset Play button label after a brief 'Saved' flash."""
+        if self._godot_proc is not None and self._godot_proc.poll() is None:
+            self._play_btn.set_label("▶ Playing…")
+        else:
+            self._play_btn.set_label("▶ Play")
+        return False  # don't repeat
+
+    def _kill_godot(self):
+        """Kill the Godot subprocess if running."""
+        if self._godot_proc is not None:
+            try:
+                self._godot_proc.terminate()
+                self._godot_proc.wait(timeout=3)
+            except (ProcessLookupError, PermissionError):
+                pass
+            except subprocess.TimeoutExpired:
+                try:
+                    self._godot_proc.kill()
+                except (ProcessLookupError, PermissionError):
+                    pass
+            self._godot_proc = None
+            self._play_btn.set_label("▶ Play")
+
     def _on_close_request(self, _window):
-        """Clean up server process when the editor window closes."""
+        """Clean up server/godot processes when the editor window closes."""
         self._kill_server()
+        self._kill_godot()
         return False  # allow the window to close
 
     # ── Public API ────────────────────────────────────────────────────────────
@@ -989,6 +1142,8 @@ class LevelEditorApp(Gtk.Application):
             flags=Gio.ApplicationFlags.FLAGS_NONE,
         )
         self.initial_file: str | None = None
+        self.native_mode: bool = False
+        self.godot_path: str = ""
 
     def do_activate(self):
         win = LevelEditorWindow(self)
@@ -1001,12 +1156,48 @@ class LevelEditorApp(Gtk.Application):
         self.activate()
 
 
+def _find_godot_binary() -> str:
+    """Try to locate the Godot 4.4 binary on macOS."""
+    candidates = [
+        "/Applications/Godot_v4.4.app/Contents/MacOS/Godot",
+        "/Applications/Godot.app/Contents/MacOS/Godot",
+    ]
+    for path in candidates:
+        if os.path.isfile(path) and os.access(path, os.X_OK):
+            return path
+    # Fall back to PATH lookup
+    import shutil
+    found = shutil.which("godot")
+    return found or ""
+
+
 def main():
     app = LevelEditorApp()
 
+    # Parse our custom flags before passing to GTK
+    args = sys.argv[:]
+    custom_flags = []
+    for a in args[1:]:
+        if a == "--native":
+            app.native_mode = True
+            custom_flags.append(a)
+        elif a.startswith("--godot-path="):
+            app.godot_path = a.split("=", 1)[1]
+            custom_flags.append(a)
+
+    # Auto-detect godot binary if --native but no --godot-path
+    if app.native_mode and not app.godot_path:
+        app.godot_path = _find_godot_binary()
+        if not app.godot_path:
+            print("Error: --native requires Godot. Install with: brew install --cask godot")
+            print("Or pass --godot-path=/path/to/godot")
+            sys.exit(1)
+
+    # Strip custom flags so GTK doesn't see them
+    args = [a for a in args if a not in custom_flags]
+
     # Accept an optional file path as the first non-flag argument
     # (strip it from argv so GTK doesn't stumble on it)
-    args = sys.argv[:]
     non_flags = [a for a in args[1:] if not a.startswith("-")]
     if non_flags:
         candidate = Path(non_flags[0])

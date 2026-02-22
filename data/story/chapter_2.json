@@ -6,8 +6,16 @@
     {
       "type": "dialog",
       "lines": [
-        { "speaker": null, "portrait": null, "text": "Nume travels north with a small band of warriors. The dark force has been spotted at the river crossing." },
-        { "speaker": "Nume", "portrait": "nume_neutral", "text": "We make our stand here. They will not cross the river." }
+        {
+          "speaker": null,
+          "portrait": null,
+          "text": "Nume travels north with a small band of warriors. The dark force has been spotted at the river crossing."
+        },
+        {
+          "speaker": "Nume",
+          "portrait": "nume_neutral",
+          "text": "We make our stand here. They will not cross the river."
+        }
       ]
     },
     {
@@ -18,13 +26,55 @@
       "player": "white",
       "hint": "Your Keeper can reach the enemy Chief diagonally.",
       "board": [
-        [null, null, null, null, null],
-        [null, null, {"type": "CHIEF", "player": "black"}, null, null],
-        [null, {"type": "KEEPER", "player": "white"}, null, null, null],
-        [null, null, null, null, null],
-        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          },
+          null,
+          null
+        ],
+        [
+          null,
+          {
+            "type": "KEEPER",
+            "player": "white"
+          },
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          null
+        ]
       ],
-      "win_condition": { "type": "capture_chief", "max_moves": 1 },
+      "win_condition": {
+        "type": "capture_chief",
+        "max_moves": 1
+      },
       "opponent_moves": []
     },
     {
@@ -35,19 +85,65 @@
       "player": "white",
       "hint": "Move your Hunter straight up to row 0.",
       "board": [
-        [null, null, null, null, null],
-        [null, null, {"type": "HUNTER", "player": "white"}, null, null],
-        [null, null, null, null, null],
-        [null, null, null, null, null],
-        [{"type": "CHIEF", "player": "white"}, null, null, null, {"type": "CHIEF", "player": "black"}]
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          {
+            "type": "HUNTER",
+            "player": "white"
+          },
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          }
+        ]
       ],
-      "win_condition": { "type": "cross_piece", "max_moves": 1 },
+      "win_condition": {
+        "type": "cross_piece",
+        "max_moves": 1
+      },
       "opponent_moves": []
     },
     {
       "type": "dialog",
       "lines": [
-        { "speaker": "Nume", "portrait": "nume_neutral", "text": "They keep coming. We must be smarter, not just stronger." }
+        {
+          "speaker": "Nume",
+          "portrait": "nume_neutral",
+          "text": "They keep coming. We must be smarter, not just stronger."
+        }
       ]
     },
     {
@@ -58,14 +154,61 @@
       "player": "white",
       "hint": "Move your Keeper to cut off the Chief's escape, then capture next turn.",
       "board": [
-        [null, null, null, null, null],
-        [null, null, null, {"type": "CHIEF", "player": "black"}, null],
-        [null, {"type": "KEEPER", "player": "white"}, null, null, null],
-        [null, null, null, {"type": "HUNTER", "player": "white"}, null],
-        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          },
+          null
+        ],
+        [
+          null,
+          {
+            "type": "KEEPER",
+            "player": "white"
+          },
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          {
+            "type": "HUNTER",
+            "player": "white"
+          },
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          null
+        ]
       ],
-      "win_condition": { "type": "capture_chief", "max_moves": 2 },
-      "opponent_moves": ["Ke1"]
+      "win_condition": {
+        "type": "capture_chief",
+        "max_moves": 2
+      },
+      "opponent_moves": [
+        "Ke1"
+      ]
     },
     {
       "type": "puzzle",
@@ -75,20 +218,70 @@
       "player": "white",
       "hint": "River Runner moves diagonally.",
       "board": [
-        [null, null, null, null, null],
-        [null, {"type": "RIVER_RUNNER", "player": "white"}, null, null, null],
-        [null, null, null, null, null],
-        [null, null, null, null, null],
-        [null, {"type": "CHIEF", "player": "white"}, null, null, {"type": "CHIEF", "player": "black"}]
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          {
+            "type": "RIVER_RUNNER",
+            "player": "white"
+          },
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          }
+        ]
       ],
-      "win_condition": { "type": "cross_piece", "max_moves": 1 },
+      "win_condition": {
+        "type": "cross_piece",
+        "max_moves": 1
+      },
       "opponent_moves": []
     },
     {
       "type": "dialog",
       "lines": [
-        { "speaker": null, "portrait": null, "text": "The dark force retreats momentarily, but their true strength remains hidden." },
-        { "speaker": "Nume", "portrait": "nume_neutral", "text": "This was only a scouting party. The real battle lies ahead." }
+        {
+          "speaker": null,
+          "portrait": null,
+          "text": "The dark force retreats momentarily, but their true strength remains hidden."
+        },
+        {
+          "speaker": "Nume",
+          "portrait": "nume_neutral",
+          "text": "This was only a scouting party. The real battle lies ahead."
+        }
       ]
     },
     {
@@ -99,36 +292,132 @@
       "player": "white",
       "hint": "The L-jump can clear the blocking pieces.",
       "board": [
-        [null, null, null, {"type": "CHIEF", "player": "black"}, null],
-        [null, null, {"type": "HUNTER", "player": "black"}, {"type": "KEEPER", "player": "black"}, null],
-        [null, {"type": "TRADER", "player": "white"}, null, null, null],
-        [null, null, null, null, null],
-        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+        [
+          null,
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          },
+          null
+        ],
+        [
+          null,
+          null,
+          {
+            "type": "HUNTER",
+            "player": "black"
+          },
+          {
+            "type": "KEEPER",
+            "player": "black"
+          },
+          null
+        ],
+        [
+          null,
+          {
+            "type": "TRADER",
+            "player": "white"
+          },
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          null
+        ]
       ],
-      "win_condition": { "type": "capture_chief", "max_moves": 1 },
+      "win_condition": {
+        "type": "capture_chief",
+        "max_moves": 2
+      },
       "opponent_moves": []
     },
     {
       "type": "puzzle",
       "id": "ch2_p06",
       "title": "Double Threat",
-      "description": "Create a fork — threaten both capture and crossing.",
+      "description": "Create a fork \u2014 threaten both capture and crossing.",
       "player": "white",
       "hint": "Position your Hunter where it threatens both the Chief and the back row.",
       "board": [
-        [null, null, null, {"type": "CHIEF", "player": "black"}, null],
-        [null, null, null, null, null],
-        [null, null, {"type": "HUNTER", "player": "white"}, null, null],
-        [null, null, null, null, null],
-        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+        [
+          null,
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          },
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          {
+            "type": "HUNTER",
+            "player": "white"
+          },
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          null
+        ]
       ],
-      "win_condition": { "type": "capture_chief", "max_moves": 2 },
-      "opponent_moves": ["Ke1"]
+      "win_condition": {
+        "type": "capture_chief",
+        "max_moves": 2
+      },
+      "opponent_moves": [
+        "Ke1"
+      ]
     },
     {
       "type": "dialog",
       "lines": [
-        { "speaker": "Nume", "portrait": "nume_neutral", "text": "We hold the border. For now." }
+        {
+          "speaker": "Nume",
+          "portrait": "nume_neutral",
+          "text": "We hold the border. For now."
+        }
       ]
     },
     {
@@ -139,14 +428,58 @@
       "player": "white",
       "hint": "Swap to reposition, then cross on the next move.",
       "board": [
-        [null, null, null, null, null],
-        [{"type": "KEEPER", "player": "white"}, {"type": "CHIEF", "player": "white"}, null, null, null],
-        [null, null, null, null, null],
-        [null, null, null, null, null],
-        [null, null, null, null, {"type": "CHIEF", "player": "black"}]
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "KEEPER",
+            "player": "white"
+          },
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          }
+        ]
       ],
-      "win_condition": { "type": "cross_piece", "max_moves": 2 },
-      "opponent_moves": ["Kd1"]
+      "win_condition": {
+        "type": "cross_piece",
+        "max_moves": 2
+      },
+      "opponent_moves": [
+        "Kd1"
+      ]
     },
     {
       "type": "puzzle",
@@ -156,13 +489,55 @@
       "player": "white",
       "hint": "The Chief is trapped in the corner.",
       "board": [
-        [null, null, null, null, {"type": "CHIEF", "player": "black"}],
-        [null, null, null, {"type": "HUNTER", "player": "white"}, null],
-        [null, null, null, null, null],
-        [null, null, null, null, null],
-        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+        [
+          null,
+          null,
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          }
+        ],
+        [
+          null,
+          null,
+          null,
+          {
+            "type": "HUNTER",
+            "player": "white"
+          },
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          null
+        ]
       ],
-      "win_condition": { "type": "capture_chief", "max_moves": 1 },
+      "win_condition": {
+        "type": "capture_chief",
+        "max_moves": 1
+      },
       "opponent_moves": []
     },
     {
@@ -173,13 +548,55 @@
       "player": "white",
       "hint": "Move the Keeper to the back row.",
       "board": [
-        [null, null, null, null, null],
-        [null, null, null, null, {"type": "KEEPER", "player": "white"}],
-        [null, null, null, null, null],
-        [null, null, null, null, null],
-        [{"type": "CHIEF", "player": "white"}, null, null, null, {"type": "CHIEF", "player": "black"}]
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          {
+            "type": "KEEPER",
+            "player": "white"
+          }
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          }
+        ]
       ],
-      "win_condition": { "type": "cross_piece", "max_moves": 1 },
+      "win_condition": {
+        "type": "cross_piece",
+        "max_moves": 1
+      },
       "opponent_moves": []
     },
     {
@@ -190,20 +607,70 @@
       "player": "white",
       "hint": "The Trader can jump to capture the Chief directly.",
       "board": [
-        [null, null, null, null, null],
-        [null, null, {"type": "CHIEF", "player": "black"}, null, null],
-        [{"type": "TRADER", "player": "white"}, null, null, null, null],
-        [null, null, null, null, null],
-        [{"type": "CHIEF", "player": "white"}, null, null, null, null]
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          {
+            "type": "CHIEF",
+            "player": "black"
+          },
+          null,
+          null
+        ],
+        [
+          {
+            "type": "TRADER",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          {
+            "type": "CHIEF",
+            "player": "white"
+          },
+          null,
+          null,
+          null,
+          null
+        ]
       ],
-      "win_condition": { "type": "capture_chief", "max_moves": 1 },
+      "win_condition": {
+        "type": "capture_chief",
+        "max_moves": 1
+      },
       "opponent_moves": []
     },
     {
       "type": "dialog",
       "lines": [
-        { "speaker": "Nume", "portrait": "nume_neutral", "text": "The border is secure. But I sense this is only the beginning." },
-        { "speaker": null, "portrait": null, "text": "Chapter 2 complete. The shadows deepen..." }
+        {
+          "speaker": "Nume",
+          "portrait": "nume_neutral",
+          "text": "The border is secure. But I sense this is only the beginning."
+        },
+        {
+          "speaker": null,
+          "portrait": null,
+          "text": "Chapter 2 complete. The shadows deepen..."
+        }
       ]
     }
   ]
